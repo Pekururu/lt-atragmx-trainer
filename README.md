@@ -7,6 +7,6 @@ Interactieve training voor de ACE ATragMX, plus de handleiding voor DMR-schutter
 - `index.html`: de trainer. Een nagebouwde ATragMX die rekent zoals ACE 3.21.1 met Advanced Ballistics, Weather en Wind Deflection uit (de LT-serverinstellingen).
 - `handleiding.html`: de handleiding DMR en sniper.
 
-Ontwerp: [OmarchyUI](assets/omarchyui.css) in grijstinten (`assets/lt.css`). Lettertype JetBrains Mono, SIL Open Font License (`fonts/LICENSE.txt`).
+Ontwerp: [OmarchyUI](assets/omarchyui.css) in grijstinten (`assets/lt.css`). Lettertype IBM Plex (Google Fonts, SIL Open Font License).
 
 Bijwerken: pas de bestanden aan en push naar `main`. GitHub Pages zet de nieuwe versie binnen een paar minuten online.

@@ -28,11 +28,10 @@
 
 html, body { background: var(--bg); }
 
-/* Lettertypes: Inter voor lopende tekst, JetBrains Mono (OmarchyUI) voor koppen, knoppen en labels */
-:root { --font-text: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
-.o-root { font-family: var(--font-text); font-feature-settings: "cv11", "ss01"; font-variant-ligatures: normal; }
-.o-root h1, .o-root h2, .o-root h3, .site-name, .site-nav a, nav.tabs button, .btn, .o-btn, .chip, .legend button,
-.o-root kbd, .explain .name, .turret .read, .fact .val, .call, .doc th, .doc .toc strong { font-family: var(--font-sans); }
+/* Lettertypes: IBM Plex Sans voor tekst en koppen, IBM Plex Mono voor toetsen en getallen */
+:root { --font-text: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; --font-num: "IBM Plex Mono", ui-monospace, Consolas, monospace; --font-sans: var(--font-text); }
+.o-root { font-family: var(--font-text); font-variant-ligatures: normal; }
+.o-root kbd { font-family: var(--font-num); }
 
 /* Sitekop, gedeeld door beide pagina's */
 .site {

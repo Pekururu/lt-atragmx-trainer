@@ -1,6 +1,6 @@
 /* OmarchyUI Â· built by build.py from tokens.json and src/ Â· do not edit, edit the source */
-@font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 100 900; font-display: swap; src: url("../fonts/JetBrainsMono.ttf") format("truetype"); }
-@font-face { font-family: "JetBrains Mono"; font-style: italic; font-weight: 100 900; font-display: swap; src: url("../fonts/JetBrainsMono-Italic.ttf") format("truetype"); }
+
+
 /* Tokens. Dark first; light with data-theme="light" on <html>, or the device setting when no theme is set. */
 :root, [data-theme="dark"] {
   color-scheme: dark;

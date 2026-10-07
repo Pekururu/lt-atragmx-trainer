@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="assets/lt.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: werkbank. Links het apparaat (blijft staan), rechts de les die erbij hoort. Op telefoon onder elkaar. */
 /* Kleuren en letters komen uit OmarchyUI (assets/omarchyui.css + assets/lt.css). Hier alleen aliassen. */
@@ -291,9 +291,10 @@ ol.steps li{padding:14px 16px}
   .devcap{margin-top:40px}
 }
 
-/* Trainer: overal Inter */
+/* Lettertypes: IBM Plex Sans voor alles, Plex Mono voor getallen en meldingen, Plex Sans Condensed op het apparaatscherm */
 .o-root, .o-root *{font-family:var(--font-text) !important}
-.screen{letter-spacing:-0.01em}
+.turret .read, .call, .fact .val, .score, table.sol td:last-child{font-family:var(--font-num) !important}
+.screen, .screen *{font-family:"IBM Plex Sans Condensed","Arial Narrow",Arial,sans-serif !important}
 </style>
 
 </head>
@@ -998,6 +999,6 @@ if(["uitleg","stappen","oefenen"].indexOf(location.hash.slice(1))>=0) start=loca
 newScenario(); renderSteps(); setExplain("Hold"); setTab(start);
 })();
 </script>
-<footer class="site-foot">Lowlands Tactical · Ontwerp: OmarchyUI in grijstinten · Lettertype JetBrains Mono (SIL Open Font License)</footer>
+<footer class="site-foot">Lowlands Tactical · Ontwerp: OmarchyUI in grijstinten · Lettertype IBM Plex (SIL Open Font License)</footer>
 </body>
 </html>
