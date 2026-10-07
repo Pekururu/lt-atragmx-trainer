@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Handleiding DMR en sniper · Lowlands Tactical</title>
+<meta name="description" content="Handleiding voor DMR-schutters en sniper/spotter-teams bij Lowlands Tactical: ATragMX, uitrusting, werkwijze en meldingen.">
+<link rel="stylesheet" href="assets/omarchyui.css">
+<link rel="stylesheet" href="assets/lt.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+</head>
+<body class="o-root">
+<header class="site">
+  <span class="site-name">Lowlands Tactical · DMR en sniper</span>
+  <nav class="site-nav" aria-label="Pagina's"><a href="index.html">ATragMX Trainer</a><a href="handleiding.html" aria-current="page">Handleiding</a></nav>
+</header>
+
+<main class="doc">
+  <nav class="toc" aria-label="Inhoud">
+    <strong>Inhoud</strong>
+    <ol>
+      <li><a href="#kort">In het kort</a></li>
+      <li><a href="#uitrusting">Uitrusting</a></li>
+      <li><a href="#atragmx">De ATragMX</a></li>
+      <li><a href="#dmr">DMR</a></li>
+      <li><a href="#sniper">Sniper en spotter</a></li>
+      <li><a href="#toetsen">Toetsen en spiekbriefje</a></li>
+    </ol>
+  </nav>
+  <article class="doc-body">
+  <h1>Handleiding DMR en sniper</h1>
+  <p class="doc-meta">Bijgewerkt 7 oktober 2026 · ACE 3.21.1</p>
+  <p class="lede">Bij Lowlands Tactical telt op afstand alleen kogelval en voorhouden. Wind heeft geen invloed op de kogel. Je bepaalt de afstand, laat de ATragMX de elevatie berekenen en schiet.</p>
+
+
+
+  <h2 id="kort">In het kort</h2>
+  <ul>
+    <li><strong>Geen wind.</strong> Draai of houd nooit links of rechts voor wind. Een misser naast het doel is een richtfout of te weinig voorhouden.</li>
+    <li><strong>Alleen elevatie corrigeren.</strong> Afstand bepalen, elevatie berekenen met de ATragMX, instellen, schieten.</li>
+    <li><strong>Bipod uit = stabiel.</strong> Met een uitgeklapte bipod zwaai je nog maar 20 % van normaal. Leunen op dekking geeft 50 %. Staand zonder steun 75 %.</li>
+    <li><strong>Geen vermoeidheid, geen storingen.</strong> Rennen maakt je niet onrustiger. Wapens raken niet oververhit en lopen niet vast.</li>
+    <li><strong>Te voet alleen first person.</strong> Je ziet de omgeving dus alleen door je eigen ogen of je kijker.</li>
+    <li><strong>Nachtkijker blijft werken</strong> als je door je richtkijker kijkt.</li>
+  </ul>
+
+  <h2 id="uitrusting">Uitrusting</h2>
+  <p>Wat je mag meenemen bepaalt de missie. Neem als DMR-schutter of spotter altijd een ATragMX mee; daarmee bereken je elevatie en voorhouden.</p>
+
+  <h3>Wapens die je vaak tegenkomt</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Rol</th><th>Wapen</th><th>Kaliber</th></tr></thead>
+    <tbody>
+      <tr><td>DMR</td><td>Mk18 ABR</td><td>7.62×51 mm</td></tr>
+      <tr><td>DMR</td><td>Rahim</td><td>7.62×54 mmR</td></tr>
+      <tr><td>DMR</td><td>SAM-R (NIArms)</td><td>5.56×45 mm</td></tr>
+      <tr><td>DMR</td><td>MXM (NAF)</td><td>6.5×39 mm</td></tr>
+      <tr><td>Sniper</td><td>M40A5 (RHS)</td><td>7.62×51 mm</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Kijkers: met of zonder torens</h3>
+  <ul>
+    <li><strong>Met verstelbare torens</strong> (0,1 mil per klik): DMS, LRPS, SOS, AMS, KHS, NVS, Nightstalker en TWS. Hierop stel je de elevatie in met de toetsen.</li>
+    <li><strong>Vast vizier</strong> zoals RCO, MRCO, ARCO en LRCO: geen torens. Hier stel je een vaste nulafstand in of houd je boven met de streepjes in het vizier.</li>
+    <li>Kijkers uit RHS, NIArms, NAF en JCA kunnen afwijken. Druk één keer op <kbd>Page Up</kbd>: verschijnt er een torenwaarde in beeld, dan heeft de kijker torens.</li>
+  </ul>
+
+  <h3>Hulpmiddelen</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Item</th><th>Waarvoor</th></tr></thead>
+    <tbody>
+      <tr><td>ATragMX</td><td>Ballistische computer: elevatie en voorhouden per doel. Het belangrijkste hulpmiddel.</td></tr>
+      <tr><td>Vector 21</td><td>Afstand en richting (kompas) naar het doel.</td></tr>
+      <tr><td>Yardage 450</td><td>Alleen afstand, tot 450 m.</td></tr>
+      <tr><td>Spotting scope</td><td>Kijker voor de spotter. Zet je op de grond.</td></tr>
+      <tr><td>MicroDAGR</td><td>Eigen positie, doelpositie en kompas.</td></tr>
+      <tr><td>Kestrel 4500</td><td>Niet nodig: wind en weer tellen niet mee.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="atragmx">De ATragMX</h2>
+  <p>De ATragMX is bij LT de standaardmethode voor DMR en sniper. Hij berekent per doel hoeveel mil je moet indraaien en voorhouden. Op onze server voer je alleen de afstand in, en bij een bewegend doel de snelheid. Wind en weer laat je op standaard.</p>
+  <p class="note">Oefenen zonder spel? Gebruik de <a href="index.html">ATragMX Trainer</a>. Die rekent hetzelfde als ACE op onze server.</p>
+
+  <h3>Openen</h3>
+  <ol>
+    <li>Zorg dat de ATragMX in je inventaris zit.</li>
+    <li>Open het ACE-zelfinteractiemenu en kies Equipment &gt; Open ATragMX.</li>
+  </ol>
+
+  <h3>Eenmalig instellen</h3>
+  <ol>
+    <li><strong>Eenheden:</strong> druk op <strong>M</strong> (metrisch). Het resultaat staat standaard in MILs; laat dat zo.</li>
+    <li><strong>Profiel kiezen:</strong> druk op GunList, selecteer het profiel van je munitie en druk op Open Gun. Done sluit de lijst zonder te wisselen. Bladeren kan ook met ▲ ▼ op het apparaat. Gebruik nooit Save Gun of Delete Gun.</li>
+    <li><strong>Nulafstand controleren:</strong> ZR in het Gun-blok moet gelijk zijn aan de nulafstand van je kijker. De profielen staan op 100 m.</li>
+    <li><strong>Atmosfeer:</strong> niets aanpassen. Temperatuur, luchtdruk en luchtvochtigheid tellen op onze server niet mee.</li>
+  </ol>
+  <div class="tbl"><table>
+    <thead><tr><th>Munitie</th><th>Wapen (voorbeeld)</th><th>ATragMX-profiel</th></tr></thead>
+    <tbody>
+      <tr><td>7.62×51 mm, standaard</td><td>Mk18 ABR, M40A5</td><td>7.62x51mm M80</td></tr>
+      <tr><td>7.62×51 mm, M118LR</td><td>M40A5</td><td>7.62x51mm M118LR</td></tr>
+      <tr><td>7.62×54 mmR</td><td>Rahim</td><td>7.62x54mmR</td></tr>
+      <tr><td>6.5×39 mm</td><td>MXM</td><td>6.5x39mm</td></tr>
+      <tr><td>5.56×45 mm, M855</td><td>SAM-R</td><td>5.56x45mm M855</td></tr>
+      <tr><td>5.56×45 mm, Mk262</td><td>SAM-R</td><td>5.56x45mm Mk262</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Per doel</h3>
+  <p>Druk op het hoofdscherm op de knop Target. Vul op het scherm Target Data in:</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Veld</th><th>Wat je invult</th></tr></thead>
+    <tbody>
+      <tr><td>Wind Speed (m/s)</td><td>0</td></tr>
+      <tr><td>Wind Direction (clock)</td><td>Laten staan; telt niet mee bij windsnelheid 0</td></tr>
+      <tr><td>Inclination Angle</td><td>Vak d (graden) op 0, tenzij je steil omhoog of omlaag schiet</td></tr>
+      <tr><td>Target Speed (m/s)</td><td>Snelheid in m/s. Stilstaand 0, lopend ongeveer 1,5, rennend ongeveer 5. Met de knop ervoor (&gt; of &lt;) kies je de looprichting</td></tr>
+      <tr><td>Target Range (meters)</td><td>Afstand in meters, van de Vector</td></tr>
+    </tbody>
+  </table></div>
+  <p>Latitude (standaard 38) en Dir of Fire (standaard 0) laat je staan; die tellen op onze server niet mee. Prev en Next hebben op dit scherm geen functie. Druk daarna op <strong>Done</strong>. De ATragMX rekent en gaat terug naar het hoofdscherm. Lees daar het resultaat af:</p>
+  <ul>
+    <li><strong>Elev, kolom Hold</strong> = elevatie in mil. Dit draai je in, of houd je boven met het vizier. Een D achter het getal (bijvoorbeeld 0.3D) betekent omlaag.</li>
+    <li><strong>Lead</strong> = voorhouden in mil, in de looprichting van het doel.</li>
+    <li><strong>Wind</strong> = negeren. Staat bij ons op 0.0.</li>
+    <li><strong>Kolommen Cor en Spin</strong> = Coriolis en spin drift. Staan bij ons altijd op 0.0. Negeren.</li>
+  </ul>
+  <p class="note">Laat de eenheid onderaan op MILs staan. Druk niet op de Enter-knop rechtsonder op het apparaat: die zet de ATragMX terug naar de beginwaarden.</p>
+
+  <h3>Handig</h3>
+  <ul>
+    <li><strong>Vier doelen opslaan:</strong> met de knoppen A t/m D bewaar je tot vier doelen tegelijk.</li>
+    <li><strong>Geen Vector?</strong> Druk op <strong>TR</strong> voor de afstandshulp. Vul de grootte van het doel en de grootte in mil in je vizier in; druk op ! naast Est Range en daarna Done. Let op: de afstandshulp rekent met de NAVO-mil (6400 per cirkel), je kijker met milliradialen. De schatting valt daardoor ongeveer 2 % te ver uit (180 cm op 2 mil: 917 m in plaats van 900 m).</li>
+    <li><strong>Snelheid onbekend?</strong> Druk op <strong>TS</strong> voor de snelheidshulp met stopwatch.</li>
+  </ul>
+
+  <h3>Controleer bij de start</h3>
+  <p>De profielen zijn algemeen en niet per wapen. Schiet aan het begin een proefschot op een bekende afstand van 300–500 m. Ligt de inslag steeds hoger of lager dan de ATragMX aangeeft, corrigeer dan op de inslag en geef het door aan je teamleider.</p>
+
+  <h2 id="dmr">DMR</h2>
+  <p>Als DMR-schutter werk je meestal op 200–600 m en schiet je zelfstandig. Per schot doe je dit:</p>
+  <ol>
+    <li><strong>Controleer je nulafstand.</strong> Die staat rechtsboven in beeld bij je wapeninfo.</li>
+    <li><strong>Bepaal de afstand.</strong> Met de Vector, de kaart of het vizier. Onder 450 m volstaat de Yardage 450.</li>
+    <li><strong>Bereken de elevatie</strong> met de ATragMX: Target, afstand invullen, Done, Elev aflezen.</li>
+    <li><strong>Stel in of houd boven.</strong>
+      <ul>
+        <li>Kijker met torens: draai de elevatie in met <kbd>Page Up</kbd> / <kbd>Page Down</kbd>.</li>
+        <li>Vast vizier: zet de nulafstand met <kbd>Page Up</kbd> / <kbd>Page Down</kbd> op de dichtstbijzijnde stap, of houd boven met de streepjes.</li>
+      </ul>
+    </li>
+    <li><strong>Zoek steun.</strong> Bipod uitklappen of op dekking leunen.</li>
+    <li><strong>Houd voor</strong> als het doel beweegt (Lead in de ATragMX).</li>
+    <li><strong>Schiet en kijk waar de kogel landt.</strong> Te hoog of te laag: corrigeer elevatie. Ernaast: corrigeer je richtpunt.</li>
+    <li><strong>Zet je elevatie terug</strong> naar nul na het gevecht.</li>
+  </ol>
+
+  <h2 id="sniper">Sniper en spotter</h2>
+  <p>De spotter zoekt het doel, meet de afstand en geeft één elevatiegetal in mil. De schutter draait dat in en schiet.</p>
+
+  <h3>Taakverdeling</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Schutter</th><th>Spotter</th></tr></thead>
+    <tbody>
+      <tr><td>Sniper rifle met torens</td><td>Vector of spotting scope, MicroDAGR, ATragMX</td></tr>
+      <tr><td>Draait in, schiet, meldt het schot</td><td>Zoekt doelen, meet afstand, geeft elevatie en correcties</td></tr>
+      <tr><td></td><td>Beveiligt de positie met een DMR of geweer</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Voor de missie</h3>
+  <ol>
+    <li>Schutter: laad de munitie die je gaat gebruiken en zet je kijker op nul.</li>
+    <li>Spotter: zet de ATragMX op het profiel van de munitie van de schutter en controleer dat ZR gelijk is aan zijn of haar nulafstand (zie <a href="#atragmx">De ATragMX</a>).</li>
+  </ol>
+
+  <h3>Per schot</h3>
+  <ol>
+    <li><strong>Doel zoeken en meten.</strong> Spotter: kijk door de Vector. Houd <kbd>R</kbd> ingedrukt voor afstand, <kbd>Tab</kbd> voor richting.</li>
+    <li><strong>Elevatie berekenen.</strong> Spotter: druk in de ATragMX op Target en vul de afstand in, en bij een bewegend doel de snelheid. Druk Done en lees Elev en Lead af.</li>
+    <li><strong>Melden.</strong> Spotter geeft één melding in deze volgorde: doel, richting, afstand, elevatie. Bijvoorbeeld: “Vijand bij de witte auto, richting 2-4-0, 640 meter, elevatie 4,3.”</li>
+    <li><strong>Indraaien.</strong> Schutter: draai de elevatie in en meld “Klaar”. Spotter antwoordt “Vuur”.</li>
+    <li><strong>Schieten.</strong> Schutter meldt “Schot” en schiet vanaf de bipod.</li>
+    <li><strong>Corrigeren.</strong> Spotter kijkt waar de kogel landt en meldt een elevatiecorrectie, bijvoorbeeld “Omhoog 0,3”. Naast het doel = richtpunt aanpassen, niet de toren.</li>
+    <li><strong>Terugzetten.</strong> Na het gevecht zet de schutter de elevatie terug naar nul.</li>
+  </ol>
+
+  <h3>Meldingen</h3>
+  <p>Gebruik altijd deze woorden, in deze volgorde. Zo weet de ander zonder nadenken wat er bedoeld wordt.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Wie</th><th>Melding</th><th>Wanneer</th><th>Voorbeeld</th></tr></thead>
+    <tbody>
+      <tr><td>Spotter</td><td>Doelmelding: doel, richting, afstand, elevatie</td><td>Doel gevonden en gemeten</td><td>“Vijand bij de witte auto, richting 2-4-0, 640 meter, elevatie 4,3.”</td></tr>
+      <tr><td>Spotter</td><td>“Voorhouden [x,x] links / rechts”</td><td>Doel beweegt; direct na de doelmelding</td><td>“Voorhouden 0,8 links.”</td></tr>
+      <tr><td>Schutter</td><td>“Klaar”</td><td>Elevatie staat in, doel in beeld</td><td>“Klaar.”</td></tr>
+      <tr><td>Spotter</td><td>“Vuur”</td><td>Spotter kijkt mee en is klaar om de inslag te zien</td><td>“Vuur.”</td></tr>
+      <tr><td>Schutter</td><td>“Schot”</td><td>Op het moment van schieten</td><td>“Schot.”</td></tr>
+      <tr><td>Spotter</td><td>“Raak”</td><td>Doel geraakt</td><td>“Raak.”</td></tr>
+      <tr><td>Spotter</td><td>“Omhoog / Omlaag [x,x]”</td><td>Inslag te laag of te hoog</td><td>“Omhoog 0,3.”</td></tr>
+      <tr><td>Spotter</td><td>“Richtpunt links / rechts”</td><td>Inslag ernaast</td><td>“Richtpunt rechts, halve lichaamsbreedte.”</td></tr>
+      <tr><td>Beiden</td><td>“Herhaal”</td><td>Melding niet verstaan</td><td>“Herhaal elevatie.”</td></tr>
+      <tr><td>Spotter</td><td>“Stop”</td><td>Niet schieten, bijvoorbeeld eigen troepen in beeld</td><td>“Stop, stop, stop.”</td></tr>
+    </tbody>
+  </table></div>
+  <p>Getallen spreek je cijfer voor cijfer uit bij richting (“2-4-0”) en als getal bij afstand (“640 meter”). Elevatie altijd in mil met één decimaal.</p>
+
+  <h2 id="toetsen">Toetsen en spiekbriefje</h2>
+  <p>Standaardtoetsen. Aanpassen kan via Options &gt; Controls &gt; Configure Addons.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Actie</th><th>Toets</th></tr></thead>
+    <tbody>
+      <tr><td>Elevatie omhoog / omlaag, 0,1 mil</td><td><kbd>Page Up</kbd> / <kbd>Page Down</kbd></td></tr>
+      <tr><td>Elevatie omhoog / omlaag, grote stap</td><td><kbd>Shift</kbd> + <kbd>Page Up</kbd> / <kbd>Page Down</kbd></td></tr>
+      <tr><td>Zijwaarts rechts / links, 0,1 mil</td><td><kbd>Ctrl</kbd> + <kbd>Page Up</kbd> / <kbd>Page Down</kbd></td></tr>
+      <tr><td>Zijwaarts rechts / links, grote stap</td><td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Page Up</kbd> / <kbd>Page Down</kbd></td></tr>
+      <tr><td>Vector: afstand</td><td><kbd>R</kbd> ingedrukt houden</td></tr>
+      <tr><td>Vector: richting</td><td><kbd>Tab</kbd> ingedrukt houden</td></tr>
+      <tr><td>ATragMX openen</td><td>ACE-zelfinteractie &gt; Equipment &gt; Open ATragMX</td></tr>
+      <tr><td>Toren op nul zetten</td><td>ACE-zelfinteractie &gt; Equipment</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Spiekbriefje</h3>
+  <ol>
+    <li>Afstand meten.</li>
+    <li>ATragMX: Target, afstand en snelheid invullen, Done, Elev aflezen.</li>
+    <li>Elevatie indraaien of boven houden.</li>
+    <li>Beweegt het doel: Lead uit de ATragMX voorhouden.</li>
+    <li>Bipod uit, schieten.</li>
+    <li>Alleen elevatie corrigeren. Geen wind.</li>
+  </ol>
+  </article>
+</main>
+
+<footer class="site-foot">Lowlands Tactical · Ontwerp: OmarchyUI in grijstinten · Lettertype JetBrains Mono (SIL Open Font License)</footer>
+</body>
+</html>

@@ -1,0 +1,1003 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ATragMX Trainer · Lowlands Tactical</title>
+<meta name="description" content="Interactieve ATragMX-training voor DMR en sniper bij Lowlands Tactical, afgestemd op onze ACE-serverinstellingen.">
+<link rel="stylesheet" href="assets/omarchyui.css">
+<link rel="stylesheet" href="assets/lt.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: werkbank. Links het apparaat (blijft staan), rechts de les die erbij hoort. Op telefoon onder elkaar. */
+/* Kleuren en letters komen uit OmarchyUI (assets/omarchyui.css + assets/lt.css). Hier alleen aliassen. */
+:root{
+  --fg:var(--ink); --muted:var(--ink-muted);
+  --hi:var(--ink); --hi-soft:var(--selected);
+  --ok:var(--ink); --ok-soft:var(--selected); --warn:var(--ink); --warn-soft:var(--surface-sunken); --no:var(--ink-muted); --no-soft:transparent;
+  --f-display:var(--font-sans); --f-body:var(--font-text); --f-mono:var(--font-sans);
+  --f-lcd:var(--font-text);
+  /* Apparaat: vaste grijstinten, in beide thema's gelijk */
+  --rubber:#151515; --olive:#4a4a4a; --olive-hi:#5c5c5c; --keys:#1c1c1c; --key:#2b2b2b; --lcd:#efefef; --lcd-ink:#111; --lcd-btn:#c9c9c9; --lcd-line:#5a5a5a;
+}
+*{box-sizing:border-box}
+body{margin:0}
+.wrap{max-width:1760px;margin:0 auto;padding-inline:16px;padding-block:24px 48px}
+header.top{display:grid;gap:10px;margin-bottom:18px}
+.eyebrow{font-family:var(--f-display);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-size:14px}
+h1{font-family:var(--f-display);font-weight:700;font-size:clamp(34px,5vw,52px);line-height:1;margin:0;text-wrap:balance}
+.lead{max-width:68ch;color:var(--muted);margin:0}
+.rules{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.rule{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-size:13px}
+.rule b{font-weight:600}
+.dot{width:8px;height:8px;border-radius:50%;flex:none}
+.dot.ok{background:var(--ok)} .dot.no{background:var(--no)} .dot.warn{background:var(--warn)}
+
+nav.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:18px 0 20px;overflow-x:auto}
+nav.tabs button{font-family:var(--f-display);font-size:19px;font-weight:600;letter-spacing:.03em;background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);padding:8px 14px;cursor:pointer;white-space:nowrap}
+nav.tabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent)}
+nav.tabs button:focus-visible{outline:2px solid var(--hi);outline-offset:2px}
+
+.bench{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:40px;align-items:start}
+@media (max-width:880px){.bench{grid-template-columns:minmax(0,1fr)}}
+.devcol{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);max-width:400px;width:100%;justify-self:center}
+@media (max-width:880px){.devcol{position:static}}
+
+/* Het apparaat: TDS Recon met ATragMX */
+.pda{background:var(--olive);border-radius:44px;padding:22px 20px 18px;position:relative;box-shadow:0 0 0 14px var(--rubber),0 18px 40px rgba(0,0,0,.35);margin:14px}
+.pda::before{content:"";position:absolute;inset:6px;border-radius:38px;border:1px solid var(--olive-hi);pointer-events:none}
+.screen{background:var(--lcd);color:var(--lcd-ink);font-family:var(--f-lcd);font-weight:600;font-size:13.5px;line-height:1.25;padding:10px 8px 8px;min-height:352px;position:relative;border:3px solid #111;border-radius:2px}
+.keys{background:var(--keys);border-radius:14px;margin-top:16px;padding:10px 14px 12px;display:grid;grid-template-columns:1fr auto 1fr;grid-template-rows:auto auto auto;gap:6px 8px;align-items:center;justify-items:center}
+.brand{grid-column:1/-1;font-family:var(--f-display);font-weight:700;letter-spacing:.18em;color:#e8e8e8;background:#111;border:1px solid #444;border-radius:4px;padding:0 14px;font-size:15px}
+.k{background:var(--key);color:#ddd;border:1px solid #000;border-radius:50%;width:34px;height:34px;display:grid;place-items:center;font-size:13px;cursor:pointer;box-shadow:inset 0 -2px 0 rgba(0,0,0,.6)}
+.k:hover{background:#3b3e39}
+.k.wide{border-radius:18px;width:46px}
+.dpad{grid-row:2/4;grid-column:2;width:118px;height:118px;border-radius:50%;background:#262826;border:1px solid #000;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);place-items:center}
+.dpad button{background:none;border:0;color:#ddd;font-size:14px;cursor:pointer;width:32px;height:32px;border-radius:50%}
+.dpad button:hover{background:#3b3e39}
+.recon{grid-column:1/-1;font-family:var(--f-display);letter-spacing:.2em;font-size:11px;color:#bbb;border:1px solid #555;border-radius:3px;padding:0 8px;margin-top:2px}
+
+.top-line{display:flex;justify-content:space-between;align-items:center;gap:6px;margin:0 2px 8px}
+.prof{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.units{display:flex;gap:4px;align-items:center}
+.u{background:none;border:0;font:inherit;color:inherit;padding:0 4px;cursor:pointer}
+.u.on{background:#000;color:#fff}
+.sbtn{background:var(--lcd-btn);border:0;font:inherit;color:inherit;padding:1px 6px;cursor:pointer}
+.sbtn:hover{filter:brightness(.93)}
+.cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px}
+.col{border:1px solid var(--lcd-line)}
+.col .hd{display:block;width:100%;text-align:center;background:var(--lcd-btn);border:0;border-bottom:1px solid var(--lcd-line);font:inherit;color:inherit;padding:2px 0;cursor:pointer}
+.col .hd:hover{filter:brightness(.93)}
+.cr{display:flex;justify-content:space-between;align-items:center;padding:3px 5px;min-height:24px;gap:4px}
+.cr .lbtn{background:var(--lcd-btn);border:0;font:inherit;color:inherit;padding:0 3px;margin-left:-3px;cursor:pointer}
+.cr .v{font-variant-numeric:tabular-nums}
+.slots{display:flex;justify-content:space-between;padding:3px 5px}
+.slots button{background:none;border:0;font:inherit;color:inherit;padding:0 4px;cursor:pointer}
+.slots button.on{background:#000;color:#fff}
+.resbox{border:1px solid var(--lcd-line);margin-top:6px;padding:4px 8px 8px;display:grid;grid-template-columns:auto repeat(3,minmax(0,1fr));gap:4px 8px;align-items:center}
+.resbox .h{text-align:center}
+.box{border:1px solid #444;background:#fff;text-align:right;padding:1px 5px;font-variant-numeric:tabular-nums;min-height:22px}
+.bot{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.warnbar{background:#d4d4d4;color:#111;border:1px solid #111;font-family:var(--f-body);font-weight:500;font-size:11.5px;padding:2px 6px;margin-bottom:6px}
+[data-k].hl{outline:3px solid var(--hi);outline-offset:1px;animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{outline-color:transparent}}
+@media (prefers-reduced-motion:reduce){[data-k].hl{animation:none}}
+.explaining [data-k]{cursor:help}
+.title-bar{background:#000;color:#fff;padding:2px 6px;margin:-10px -8px 8px}
+.tgt-form{display:grid;gap:7px;padding:52px 4px 0}
+.tbar{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--lcd-btn);margin:44px -4px 0}
+.tbar button{background:var(--lcd-btn);border:0;font:inherit;color:inherit;padding:3px 0;cursor:pointer}
+.tbar button+button{border-left:2px solid var(--lcd)}
+.tbar button:hover{filter:brightness(.93)}
+.tgt-form .sub{font-size:11px;color:#666;margin-right:2px}
+.tgt-form .f{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;align-items:center}
+.tgt-form input{width:62px;font:inherit;padding:1px 4px;border:1px solid #444;background:#fff;color:#000;text-align:right;border-radius:0}
+.tgt-form input:focus{outline:2px solid #1d3f8a}
+.tgt-form .pair{display:flex;gap:4px}
+.tgt-form .pair{align-items:center}
+.tgt-form .pair input{width:44px}
+.list{display:grid;gap:1px;max-height:280px;overflow:auto}
+.list button{text-align:left;font:inherit;background:none;border:0;padding:3px 6px;cursor:pointer;color:inherit}
+.list button.on{background:#000;color:#fff}
+.list button:hover:not(.on){background:#ddd}
+.gl{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:10px;min-height:330px}
+.gl-h{background:var(--lcd-btn);padding:2px 6px;margin-bottom:4px}
+.gl .list{max-height:300px;border-right:6px solid #d6d6d6}
+.gl .list button.on{background:var(--lcd-btn);color:inherit}
+.gl-r{display:flex;flex-direction:column;gap:6px}
+.gl-r .sbtn{text-align:right;padding:2px 6px}
+.gl-r span{min-height:8px}
+.gl-r .gl-sp{flex:1}
+.optbg{position:absolute;inset:0;background:transparent;border:0;padding:0;cursor:default}
+.optpop{position:absolute;right:8px;top:38%;width:56%;background:#fff;border:1px solid #333;display:grid;padding:2px 0;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.optpop button{text-align:left;background:none;border:0;font:inherit;color:inherit;padding:1px 10px;cursor:pointer}
+.optpop button.on{background:#e6e6e6}
+.optpop button:hover{background:#d9d9d9}
+.ra{padding:28px 4px 0}
+.ra-note{font-size:12px;line-height:1.3;margin:0 0 18px}
+.ra-r{display:grid;grid-template-columns:minmax(0,1fr) 22px 70px 74px;gap:6px;align-items:center;margin-bottom:10px}
+.ra-r .ra-l{text-align:right}
+.ra-r input{font:inherit;width:100%;padding:1px 4px;border:1px solid #444;background:#fff;color:#000;text-align:right}
+.ra-r input:focus{outline:2px solid #1d3f8a}
+.ra-x{text-align:center;padding:1px 0}
+.ra-u{text-align:left;background:var(--lcd-btn);padding:1px 6px;min-height:20px}
+.ra-r:first-of-type{grid-template-columns:minmax(0,1fr) auto}
+.ra-hw{display:flex;gap:0;background:#fff;border:1px solid #fff}
+.ra-hw .u{padding:1px 8px}
+.sa-r{display:grid;grid-template-columns:minmax(0,1fr) 70px 74px;gap:6px;align-items:center;margin-bottom:12px}
+.sa-r .ra-l{text-align:right}
+.sa-r input{font:inherit;width:100%;padding:1px 4px;border:1px solid #444;background:#fff;color:#000;text-align:right}
+.sa-r input:focus{outline:2px solid #1d3f8a}
+.sa-timer{display:grid;gap:14px;justify-items:center;padding-top:228px}
+.sa-time{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
+.sa-stop{padding:3px 18px}
+.rc-top{display:flex;justify-content:space-between;align-items:center;margin:2px 0 8px}
+.rc-btns{display:flex;gap:0;background:var(--lcd-btn)}
+.rc-btns .sbtn{padding:1px 8px}
+.rc thead th{background:var(--lcd-btn);position:sticky;top:0}
+.rc-col{background:none;border:0;font:inherit;color:inherit;padding:0;cursor:pointer}
+.atm-top{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin:0 0 54px}
+.atm-cm{border:1px solid #333;margin:0;padding:2px 10px 6px;display:flex;gap:4px;min-width:150px}
+.atm-cm legend{padding:0 2px;font:inherit}
+.atm-r{grid-template-columns:minmax(0,1fr) 64px}
+.sc-f{justify-content:space-between;margin:0 6px 26px}
+.sc-f .u{padding:1px 8px}
+.sc-b{display:flex;justify-content:center;gap:12px;margin-top:30px}
+.sc-b .sbtn{padding:2px 18px}
+.rc{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.rc th,.rc td{text-align:left;padding:2px 6px}
+.rcwrap{max-height:322px;overflow:auto;border-right:6px solid #d6d6d6}
+.msg{font-family:var(--f-body);font-weight:400;font-size:13px;margin:4px 2px 10px}
+
+/* Rechterkolom */
+.panel{min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.panel h2{font-family:var(--f-display);font-weight:700;font-size:28px;line-height:1.1;margin:0 0 6px;text-wrap:balance}
+.panel p{margin:0 0 10px;max-width:66ch}
+.muted{color:var(--muted)}
+.chip{display:inline-block;font-size:12px;font-weight:600;border-radius:4px;padding:1px 8px;letter-spacing:.02em}
+.chip.use{background:var(--ok-soft);color:var(--ok)}
+.chip.check{background:var(--warn-soft);color:var(--warn)}
+.chip.ignore{background:var(--no-soft);color:var(--no)}
+.chip.never{background:var(--no);color:#fff}
+.explain{display:grid;gap:8px;min-height:150px}
+.explain .name{font-family:var(--f-mono);font-weight:600;font-size:16px}
+.lt{border-left:3px solid var(--accent);padding:6px 10px;background:var(--bg);border-radius:0 6px 6px 0}
+.lt b{color:var(--accent)}
+.legend{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px;margin-top:12px}
+.legend button{display:flex;justify-content:space-between;gap:6px;align-items:center;text-align:left;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-family:var(--f-mono);font-size:13px;color:var(--fg);cursor:pointer}
+.legend button:hover,.legend button.on{border-color:var(--accent)}
+
+ol.steps{list-style:none;padding:0;margin:12px 0 0;display:grid;gap:6px;counter-reset:s}
+ol.steps li{counter-increment:s;display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+ol.steps li::before{content:counter(s);font-family:var(--f-display);font-weight:700;font-size:18px;line-height:1.3;color:var(--muted);text-align:center}
+ol.steps li.done{opacity:.6}
+ol.steps li.done::before{content:"✓";color:var(--ok)}
+ol.steps li.now{border-color:var(--hi);background:var(--hi-soft)}
+ol.steps li.now::before{color:var(--hi)}
+ol.steps li.later{display:none}
+ol.steps li.fin::before{content:"✓";color:var(--ok)}
+.step-t{font-weight:600}
+.step-d{color:var(--muted);font-size:14px;margin-top:2px}
+.btn{font-family:var(--f-body);font-weight:600;font-size:14px;border-radius:6px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);padding:7px 14px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn:focus-visible,.sbtn:focus-visible,.k:focus-visible,.legend button:focus-visible,.screen button:focus-visible{outline:2px solid var(--hi);outline-offset:2px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.progress{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:10px}
+.progress span{display:block;height:100%;background:var(--accent);transition:width .3s}
+
+.call{font-family:var(--f-mono);font-size:15px;background:var(--bg);border:1px dashed var(--line);border-radius:8px;padding:10px 12px;margin:8px 0 12px}
+.call .who{font-family:var(--f-display);font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:block}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:12px}
+.fact{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.fact .l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.fact .val{font-family:var(--f-mono);font-weight:600;font-size:16px}
+.dial{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.turret{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.turret .l{font-size:13px;color:var(--muted)}
+.turret .read{font-family:var(--f-mono);font-size:26px;font-weight:600;font-variant-numeric:tabular-nums;margin:2px 0 6px}
+.turret .bt{display:flex;flex-wrap:wrap;gap:4px}
+.turret .bt button{font-family:var(--f-mono);font-size:13px;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:5px;padding:4px 8px;cursor:pointer}
+.turret .bt button.on{border-color:var(--accent);color:var(--accent);font-weight:600}
+.scopewrap{display:grid;grid-template-columns:minmax(0,240px) minmax(0,1fr);gap:16px;align-items:center;margin-top:14px}
+@media (max-width:520px){.scopewrap{grid-template-columns:minmax(0,1fr)}}
+.scope{max-width:240px;width:100%;aspect-ratio:1}
+.verdict{font-family:var(--f-display);font-size:26px;font-weight:700}
+.verdict.hit{color:var(--ok)} .verdict.miss{color:var(--no)}
+.score{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+table.sol{border-collapse:collapse;font-size:14px;margin-top:8px}
+table.sol td{padding:3px 12px 3px 0;border-bottom:1px solid var(--line)}
+table.sol td:last-child{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.foot{margin-top:28px;color:var(--muted);font-size:13px;max-width:80ch}
+
+/* OmarchyUI: rechte hoeken, randen in plaats van kleur */
+.card,.rule,.chip,.btn,.legend button,ol.steps li,.call,.fact,.turret,.turret .bt button,.progress,.progress span,.lt,nav.tabs button{border-radius:0}
+.card{border-color:var(--line);background:var(--surface)}
+.btn{border:1px solid var(--accent);background:var(--selected);color:var(--ink);font-family:var(--font-sans);min-height:var(--tap-min);padding:0 14px}
+.btn:hover{background:var(--control-hover)}
+.btn.ghost{border-color:var(--line-strong);background:var(--control-normal);color:var(--ink)}
+.chip.use{background:var(--ink);color:var(--bg)}
+.chip.check{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+.chip.ignore{background:transparent;color:var(--ink-muted);border:1px dashed var(--line-strong)}
+.chip.never{background:var(--bg);color:var(--ink);border:2px solid var(--ink)}
+.chip.never::before{content:"⚠ "}
+.dot{border-radius:0;width:10px;height:10px}
+.dot.ok{background:var(--ink)}
+.dot.warn{background:transparent;border:2px solid var(--ink)}
+.dot.no{background:transparent;border:1px dashed var(--ink-muted)}
+ol.steps li.now{border-color:var(--ink);background:var(--selected)}
+ol.steps li.now::before{color:var(--ink)}
+ol.steps li.done::before{color:var(--ink)}
+.lt{border-left-color:var(--ink);background:var(--surface-sunken)}
+.lt b{color:var(--ink)}
+.verdict.hit,.verdict.miss{color:var(--ink)}
+.eyebrow{color:var(--ink-muted)}
+nav.tabs button[aria-selected="true"]{border-bottom-color:var(--ink)}
+.turret .bt button.on{border-color:var(--ink);color:var(--ink);background:var(--selected)}
+[data-k].hl{outline:3px solid #000;box-shadow:0 0 0 5px #fff}
+h1{font-weight:700;font-size:clamp(28px,4vw,40px);line-height:1.1}
+.panel h2{font-size:22px}
+.panel h3{font-size:17px}
+nav.tabs button{font-size:16px}
+.foot{border-top:1px solid var(--line);padding-top:12px}
+
+/* Ruimte en uitlijning */
+.wrap{padding-block:32px 56px}
+header.top{gap:14px;margin-bottom:8px}
+.lead{line-height:1.6;max-width:90ch}
+.rules{gap:8px 10px;margin-top:6px}
+.rule{display:inline-block;padding:6px 12px;line-height:1.45}
+.rule .dot{display:inline-block;vertical-align:-1px;margin-right:8px}
+nav.tabs{margin:28px 0 28px;flex-wrap:wrap;overflow-x:visible}
+nav.tabs button{padding:10px 16px}
+.card{padding:24px 26px}
+.panel h2{margin:0 0 12px;line-height:1.25}
+.panel p{margin:0 0 14px;line-height:1.6;max-width:90ch}
+.explain{gap:12px;margin-top:6px}
+.legend{margin-top:20px;gap:8px;grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
+ol.steps{margin-top:18px;gap:10px}
+ol.steps li{padding:14px 16px}
+.step-d{margin-top:4px;line-height:1.55}
+.progress{margin-top:16px}
+.actions{margin-top:18px;gap:10px}
+.call{margin:12px 0 16px;padding:12px 14px}
+.facts{gap:10px;margin-bottom:16px}
+.fact{padding:10px 12px}
+.dial{gap:16px;margin-top:4px}
+.turret{padding:14px 16px}
+.turret .read{margin:4px 0 10px}
+.scopewrap{margin-top:24px;gap:24px}
+.scope{color:var(--ink)}
+.devcap{font-size:13px;line-height:1.55;margin:56px 0 0 14px;max-width:46ch}
+.foot{margin-top:48px;padding-top:16px;line-height:1.6;max-width:none}
+/* Toetsenblok: zelfde indeling als de TDS Recon */
+.keys{grid-template-rows:auto repeat(3,auto);row-gap:10px}
+.keys .brand{grid-row:1;grid-column:1/-1}
+.dpad{grid-row:2/5;grid-column:2}
+#k-sl{grid-row:2;grid-column:1} #k-sr{grid-row:2;grid-column:3}
+#k-win{grid-row:3;grid-column:1} #k-ok{grid-row:3;grid-column:3}
+#k-power{grid-row:4;grid-column:1} #k-enter{grid-row:4;grid-column:3}
+.keys .recon{grid-row:5;grid-column:1/-1}
+/* Telefoon: apparaat past binnen de breedte */
+@media (max-width:520px){
+  .pda{margin:12px 12px 14px;padding:16px 10px 14px;border-radius:30px;box-shadow:0 0 0 10px var(--rubber),0 12px 28px rgba(0,0,0,.35)}
+  .pda::before{border-radius:26px}
+  .screen{font-size:12px;padding:8px 6px 6px}
+  .cr{padding:3px 3px}
+  .resbox{padding:4px 5px 6px;gap:4px 5px}
+  .card{padding:18px 16px}
+  .devcap{margin-top:40px}
+}
+
+/* Trainer: overal Inter */
+.o-root, .o-root *{font-family:var(--font-text) !important}
+.screen{letter-spacing:-0.01em}
+</style>
+
+</head>
+<body class="o-root">
+<header class="site">
+  <span class="site-name">Lowlands Tactical · DMR en sniper</span>
+  <nav class="site-nav" aria-label="Pagina's"><a href="index.html" aria-current="page">ATragMX Trainer</a><a href="handleiding.html">Handleiding</a></nav>
+</header>
+<div class="wrap">
+  <header class="top">
+    <h1>ATragMX Trainer</h1>
+    <p class="lead">Leer de ATragMX bedienen zoals we hem bij LT gebruiken. Het apparaat links werkt: het rekent hetzelfde als ACE op onze server. Alleen je profiel, de afstand, de doelsnelheid en de hoek tellen mee.</p>
+    <div class="rules" aria-label="Wat telt mee op onze server">
+      <span class="rule"><span class="dot ok"></span><b>Telt mee:</b> profiel, afstand, doelsnelheid, hoek</span>
+      <span class="rule"><span class="dot no"></span><b>Telt niet mee:</b> wind, temperatuur, luchtdruk, luchtvochtigheid</span>
+      <span class="rule"><span class="dot no"></span><b>Altijd 0.0:</b> Cor (Coriolis) en Spin</span>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Onderdelen">
+    <button role="tab" id="tab-uitleg" aria-selected="true" data-tab="uitleg">1. Het scherm</button>
+    <button role="tab" id="tab-stappen" aria-selected="false" data-tab="stappen">2. Stap voor stap</button>
+    <button role="tab" id="tab-oefenen" aria-selected="false" data-tab="oefenen">3. Oefenen</button>
+  </nav>
+
+  <div class="bench">
+    <div class="devcol">
+      <div class="pda" aria-label="Gesimuleerde ATragMX">
+        <div class="screen" id="screen"></div>
+        <div class="keys">
+          <div class="brand">▲TDS</div>
+          <button class="k wide" type="button" id="k-sl" data-k="k-soft" aria-label="Softkey links">–</button>
+          <div class="dpad">
+            <span></span><button type="button" id="k-up" data-k="k-pad" aria-label="Vorig profiel">▲</button><span></span>
+            <button type="button" id="k-left" data-k="k-pad" aria-label="Vorig doel">◀</button><span></span><button type="button" id="k-right" data-k="k-pad" aria-label="Volgend doel">▶</button>
+            <span></span><button type="button" id="k-down" data-k="k-pad" aria-label="Volgend profiel">▼</button><span></span>
+          </div>
+          <button class="k wide" type="button" id="k-sr" data-k="k-soft" aria-label="Softkey rechts">–</button>
+          <button class="k" type="button" id="k-win" data-k="k-win" aria-label="Windows-toets">⊞</button>
+          <button class="k" type="button" id="k-ok" data-k="k-ok" aria-label="OK">ok</button>
+          <button class="k" type="button" id="k-power" data-k="k-power" aria-label="Aan/uit">⏻</button>
+          <button class="k wide" type="button" id="k-enter" data-k="k-enter" aria-label="Enter">↵</button>
+          <div class="recon">RECON</div>
+        </div>
+      </div>
+      <p class="muted devcap">Nagebouwd naar het ATragMX-scherm in ACE 3.21.1. Het hoofdscherm volgt het spel; de andere schermen zijn vereenvoudigd.</p>
+    </div>
+
+    <div class="panel">
+      <section id="p-uitleg" role="tabpanel" aria-labelledby="tab-uitleg">
+        <div class="card">
+          <h2>Wat zie je op het scherm?</h2>
+          <p>Klik op een veld, knop of toets op het apparaat, of kies hieronder. Je ziet wat het doet en wat je er bij LT mee doet.</p>
+          <div class="explain" id="explain" aria-live="polite"></div>
+          <div class="legend" id="legend"></div>
+        </div>
+      </section>
+
+      <section id="p-stappen" role="tabpanel" aria-labelledby="tab-stappen" hidden>
+        <div class="card">
+          <h2>Twee doelen, van begin tot eind</h2>
+          <p>Volg de gemarkeerde stap. Je doet het op het apparaat; de stap gaat vanzelf door als het goed is.</p>
+          <div class="progress" aria-hidden="true"><span id="prog" style="width:0%"></span></div>
+          <ol class="steps" id="steps"></ol>
+          <div class="actions"><button class="btn ghost" type="button" id="restart">Opnieuw beginnen</button></div>
+        </div>
+      </section>
+
+      <section id="p-oefenen" role="tabpanel" aria-labelledby="tab-oefenen" hidden>
+        <div class="card">
+          <h2>Oefenen met een spottermelding</h2>
+          <p>Je krijgt een melding van je spotter. Reken het schot uit op de ATragMX, draai in, houd voor en schiet.</p>
+          <div id="scen"></div>
+          <div class="dial">
+            <div class="turret">
+              <div class="l">Elevatietoren (mil boven nul)</div>
+              <div class="read" id="r-elev">0.0</div>
+              <div class="bt">
+                <button type="button" data-de="-1">−1.0</button><button type="button" data-de="-0.1">−0.1</button>
+                <button type="button" data-de="0.1">+0.1</button><button type="button" data-de="1">+1.0</button>
+                <button type="button" data-de="0">Nul</button>
+              </div>
+            </div>
+            <div class="turret">
+              <div class="l">Voorhouden (mil)</div>
+              <div class="read" id="r-lead">0.0</div>
+              <div class="bt">
+                <button type="button" data-dl="-0.1">−0.1</button><button type="button" data-dl="0.1">+0.1</button><button type="button" data-dl="0">0</button>
+                <button type="button" data-side="L" id="side-L">Links</button><button type="button" data-side="R" id="side-R">Rechts</button>
+              </div>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn" type="button" id="fire">Schot</button>
+            <button class="btn ghost" type="button" id="showsol">Toon oplossing</button>
+            <button class="btn ghost" type="button" id="next">Nieuwe melding</button>
+          </div>
+          <div class="scopewrap">
+            <svg class="scope" id="scope" viewBox="-100 -100 200 222" role="img" aria-label="Kijkerbeeld met inslag"></svg>
+            <div aria-live="polite">
+              <div class="verdict" id="verdict">Nog niet geschoten</div>
+              <p id="spotcall" class="muted" style="margin:4px 0 6px">Je spotter meldt hier de inslag.</p>
+              <div class="score" id="score">Raak 0 van 0</div>
+              <div id="sol"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <p class="foot">Gebaseerd op ACE 3.21.1 (onderdeel ace_atragmx) en de LT-serverinstellingen: Advanced Ballistics, Weather en Wind Deflection staan uit. De berekening volgt de ATragMX-code voor dat geval: vanilla luchtweerstand, zwaartekracht en hoek. In het spel kan een wapen een iets andere mondingssnelheid hebben dan het profiel; controleer dat met een proefschot.</p>
+</div>
+
+<script>
+(function(){
+"use strict";
+// ATragMX-profielen uit ACE 3.21.1 (fnc_initGunList): naam, MV m/s, ZR m, airFriction, boorhoogte cm, kogelgewicht g
+var GUNS=[
+  {n:"12.7x108mm", mv:820, zr:100, af:-0.00065098, bh:8.89, bw:48.28, d:12.7, tw:38.1},
+  {n:"12.7x108mm APDS", mv:1060, zr:100, af:-0.00036, bh:8.89, bw:27.95, d:11.08, tw:38.1},
+  {n:"12.7x99mm AMAX", mv:852, zr:100, af:-0.00037397, bh:8.89, bw:48.6, d:12.7, tw:38.1},
+  {n:"12.7x99mm", mv:892, zr:100, af:-0.00058679, bh:8.89, bw:41.92, d:12.7, tw:38.1},
+  {n:"12.7x54mm", mv:295, zr:100, af:-0.00037716, bh:6.35, bw:48.2, d:11.9, tw:25.0},
+  {n:".50 Beowulf", mv:549, zr:100, af:-0.00209809, bh:6.6, bw:21.64, d:12.7, tw:50.8},
+  {n:".408 CheyTac 305gr", mv:1059, zr:100, af:-0.00065414, bh:7.37, bw:19.76, d:10.4, tw:33.02},
+  {n:".408 CheyTac 419gr", mv:859, zr:100, af:-0.00046249, bh:7.37, bw:27.15, d:10.4, tw:33.02},
+  {n:"9.3×64mm", mv:780, zr:100, af:-0.00080801, bh:8.13, bw:17.0, d:9.65, tw:36.0},
+  {n:".338LM 250gr", mv:872, zr:100, af:-0.00060841, bh:7.37, bw:16.2, d:8.58, tw:25.4},
+  {n:".338LM 300gr", mv:792, zr:100, af:-0.00055706, bh:7.37, bw:19.44, d:8.58, tw:25.4},
+  {n:".338LM API526", mv:872, zr:100, af:-0.0006922, bh:7.37, bw:16.39, d:8.58, tw:25.4},
+  {n:".300WM Mk248 Mod0", mv:857, zr:100, af:-0.00072468, bh:7.37, bw:12.31, d:7.8, tw:25.4},
+  {n:".300WM Mk248 Mod1", mv:839, zr:100, af:-0.00063027, bh:7.37, bw:14.26, d:7.8, tw:25.4},
+  {n:".300WM Berger OTM", mv:792, zr:100, af:-0.00054587, bh:7.37, bw:14.9, d:7.8, tw:25.4},
+  {n:"7.62x54mmR", mv:828, zr:100, af:-0.00103739, bh:7.11, bw:9.849, d:7.92, tw:24.13},
+  {n:"7.62x51mm M80", mv:802, zr:100, af:-0.00103711, bh:7.62, bw:9.461, d:7.82, tw:25.4},
+  {n:"7.62x51mm M118LR", mv:757, zr:100, af:-0.00085157, bh:7.62, bw:11.34, d:7.82, tw:25.4},
+  {n:"7.62x51mm Mk316", mv:781, zr:100, af:-0.00084311, bh:7.62, bw:11.34, d:7.82, tw:25.4},
+  {n:"7.62x51mm Mk319", mv:900, zr:100, af:-0.00104515, bh:7.62, bw:8.424, d:7.82, tw:25.4},
+  {n:"7.62x51mm M993", mv:912, zr:100, af:-0.0010939, bh:7.62, bw:8.23, d:7.82, tw:25.4},
+  {n:"7.62x51mm Subsonic", mv:314, zr:100, af:-0.00060194, bh:6.86, bw:12.96, d:7.82, tw:25.4},
+  {n:"7.62x39mm", mv:715, zr:100, af:-0.00154815, bh:7.62, bw:7.97, d:7.92, tw:24.0},
+  {n:"6.5x39mm", mv:766, zr:100, af:-0.00077363, bh:6.35, bw:7.97, d:6.71, tw:22.86},
+  {n:"6.5x47mm Lapua", mv:767, zr:100, af:-0.00069003, bh:6.35, bw:9.007, d:6.71, tw:22.86},
+  {n:"6.5mm Creedmor", mv:822, zr:100, af:-0.00062437, bh:6.35, bw:9.072, d:6.71, tw:22.86},
+  {n:"5.8x42mm DBP87", mv:942, zr:100, af:-0.00121087, bh:9.91, bw:4.15, d:6.0, tw:24.4},
+  {n:"5.8x42mm DBP88", mv:895, zr:100, af:-0.00096786, bh:8.89, bw:5.0, d:6.0, tw:20.6},
+  {n:"5.56x45mm M855", mv:862, zr:100, af:-0.00130094, bh:7.11, bw:4.018, d:5.7, tw:17.78},
+  {n:"5.56x45mm Mk262", mv:812, zr:100, af:-0.00111805, bh:7.11, bw:4.99, d:5.7, tw:17.78},
+  {n:"5.56x45mm Mk318", mv:872, zr:100, af:-0.0012588, bh:7.11, bw:4.018, d:5.7, tw:17.78},
+  {n:"5.56x45mm M995", mv:861, zr:100, af:-0.00126182, bh:7.11, bw:4.536, d:5.7, tw:17.78},
+  {n:"5.45x39mm 7N6M", mv:735, zr:100, af:-0.00119458, bh:3.81, bw:3.43, d:5.6, tw:16.0}
+];
+function curGun(){return S.wm||GUNS[S.gun];}
+function gi(n){for(var i=0;i<GUNS.length;i++){if(GUNS[i].n===n) return i;} return 0;}
+var WEAPONS=[
+  {w:"Mk18 ABR", g:gi("7.62x51mm M80")}, {w:"M40A5", g:gi("7.62x51mm M80")}, {w:"M40A5 met M118LR", g:gi("7.62x51mm M118LR")},
+  {w:"Rahim", g:gi("7.62x54mmR")}, {w:"MXM", g:gi("6.5x39mm")}, {w:"SAM-R met M855", g:gi("5.56x45mm M855")}, {w:"SAM-R met Mk262", g:gi("5.56x45mm Mk262")}
+];
+var G=9.8066, UNITS=["MILs","TMOA","SMOA","Clicks"];
+
+// Vanilla-baan zoals ace_atragmx_fnc_calculate_solution zonder Advanced Ballistics
+function fly(angDeg,gun,range,ia){
+  var a=(angDeg+ia)*Math.PI/180, b=angDeg*Math.PI/180;
+  var g=[0,Math.sin(a)*-G,Math.cos(a)*-G];
+  var p=[0,0,-gun.bh/100], v=[0,Math.cos(b)*gun.mv,Math.sin(b)*gun.mv], last=p.slice(), t=0, dt=1/Math.round(gun.mv), i;
+  while(t<15 && p[1]<range){
+    var s=Math.hypot(v[0],v[1],v[2]);
+    var acc=[v[0]*s*gun.af+g[0], v[1]*s*gun.af+g[1], v[2]*s*gun.af+g[2]];
+    last=p.slice();
+    for(i=0;i<3;i++){p[i]+=v[i]*dt*0.5;}
+    for(i=0;i<3;i++){v[i]+=acc[i]*dt;}
+    for(i=0;i<3;i++){p[i]+=v[i]*dt*0.5;}
+    t+=dt;
+  }
+  var f=(range-last[1])/((p[1]-last[1])||1);
+  return {tz:last[2]+(p[2]-last[2])*f, t:t, v:Math.hypot(v[0],v[1],v[2])};
+}
+var zeroCache={};
+function zeroAngle(gun){
+  var key=gun.n+"|"+gun.zr+"|"+gun.mv+"|"+gun.af+"|"+gun.bh; if(zeroCache[key]!=null) return zeroCache[key];
+  var lo=-1,hi=2; for(var i=0;i<50;i++){var m=(lo+hi)/2; if(fly(m,gun,gun.zr,0).tz>0) hi=m; else lo=m;}
+  return (zeroCache[key]=(lo+hi)/2);
+}
+function solve(gun,range,ts,ia){
+  if(!(range>0)) return null;
+  var r=fly(zeroAngle(gun),gun,range,ia||0);
+  return {elev:-Math.atan(r.tz/range)*1000, lead:(ts*r.t)/(Math.tan(0.001)*range), tof:r.t, v:r.v, e:0.5*(gun.bw/1000)*r.v*r.v*0.737562149};
+}
+
+// Toestand van het apparaat (beginwaarden zoals ace_atragmx_fnc_init)
+function newSlot(){return {ws:0,ws2:0,wd:12,ia:0,ts:0,dir:"R",tr:0,lat:38,dof:0,res:null};}
+var S={clk:{u:2,n:10}, clkT:null, wm:null, atm:{tbh:true,t:15,b:1013.25,h:0,a:0}, atmE:null, rcs:{start:500,end:2000,inc:50}, rcCol:3, sa:{tr:"0",nt:"",tm:"",est:"0",ntu:0}, ra:{useH:true,ts:"",is:"",an:"0",er:"0",tsu:2,isu:0}, gun:gi("7.62x51mm M80"), pick:0, opt:false, cor:true, cur:0, unit:"M", su:0, screen:"main", slot:0, slots:[newSlot(),newSlot(),newSlot(),newSlot()], wind2:false, explain:"Hold", tab:"uitleg"};
+
+function el(id){return document.getElementById(id);}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+function r2(x){return Math.round(x*100)/100;}
+function inUnit(mil){ if(S.su===0) return r2(mil); if(S.su===1) return r2(mil*3.4377468); if(S.su===2) return r2(mil*3.4377468*1.047); return Math.round(mil/clickMil()); }
+function clickMil(){var u=S.clk.u, n=S.clk.n, moa=0.2908882; return (u===2?1:u===0?moa:moa/1.047)/n;}
+// Schermnotatie zoals fnc_update_result: positief = getal, negatief = getal + D, nul = 0.0
+function fmtElev(mil){var x=inUnit(mil); return x>0?String(x):x<0?Math.abs(x)+"D":"0.0";}
+function fmtLead(mil,dir){var x=inUnit(mil); return x>0?x+(dir==="R"?"R":"L"):"0.0";}
+function dec1(x){return (Math.round(x*10)/10).toFixed(1);}
+
+function render(){
+  var sc=el("screen"), gun=curGun(), t=S.slots[S.slot], h="", r=t.res;
+  if(S.screen==="main"){
+    if(S.unit!=="M") h+='<div class="warnbar">Eenheden staan niet op metrisch. Druk op M.</div>';
+    if(!S.cor) h+='<div class="warnbar">Show Coriolis staat uit. Zet het aan via Options.</div>';
+    if(S.su!==0) h+='<div class="warnbar">Resultaat staat in '+UNITS[S.su]+'. Druk op '+UNITS[S.su]+' tot MILs terugkomt.</div>';
+    h+='<div class="top-line"><span class="prof" data-k="Profile">'+esc(gun.n)+'</span><span class="units" data-k="Units">'+
+       ["D","E","M"].map(function(u){return '<button type="button" class="u'+(S.unit===u?' on':'')+'" data-unit="'+u+'" data-k="Units">'+u+'</button>';}).join("")+
+       '<button type="button" class="sbtn" data-act="rc" data-k="RC">RC</button></span></div>';
+    h+='<div class="cols">'+
+      '<div class="col"><button type="button" class="hd" data-act="gun" data-k="Gun">Gun</button>'+
+        cr("BH",gun.bh.toFixed(2))+cr("BW",gun.bw.toFixed(1))+cr("C1",(-gun.af*1000).toFixed(3))+
+        '<div class="cr"><button type="button" class="lbtn" data-act="mv" data-k="MV">MV</button><span class="v">'+gun.mv+'</span></div>'+cr("ZR",gun.zr)+'</div>'+
+      '<div class="col"><button type="button" class="hd" data-act="atm" data-k="Atmsphr">Atmsphr</button>'+
+        '<div class="cr"></div>'+cr("Tmp",S.unit==="M"?String(Math.round(S.atm.t)):String(Math.round(S.atm.t*1.8+32)),"Atmsphr")+(S.atm.tbh?cr("BP",S.unit==="M"?String(Math.round(S.atm.b)):String(Math.round(S.atm.b/33.8638866667*100)/100),"Atmsphr")+cr("RH",String(Math.round(S.atm.h*100)),"Atmsphr"):cr("Alt",S.unit==="M"?String(Math.round(S.atm.a)):String(Math.round(S.atm.a*3.2808399)),"Atmsphr")+'<div class="cr"></div>')+
+        '<div class="slots" data-k="Slots">'+["A","B","C","D"].map(function(x,i){return '<button type="button" class="'+(S.slot===i?'on':'')+'" data-slot="'+i+'" data-k="Slots">'+x+'</button>';}).join("")+'</div></div>'+
+      '<div class="col"><button type="button" class="hd" data-act="target" data-k="Target">Target</button>'+
+        cr("WS",t.ws)+cr("WD",t.wd)+cr("IA",t.ia)+
+        '<div class="cr"><button type="button" class="lbtn" data-act="tsassist" data-k="TS">TS</button><span class="v">'+t.ts+'</span></div>'+
+        '<div class="cr"><button type="button" class="lbtn" data-act="trassist" data-k="TR">TR</button><span class="v">'+t.tr+'</span></div></div>'+
+    '</div>';
+    h+=resBox(r,t);
+    h+='<div class="bot"><button type="button" class="sbtn" data-act="gunlist" data-k="GunList" style="padding:1px 22px 1px 4px">GunList</button>'+
+       '<button type="button" class="u" data-act="su" data-k="ScopeUnit">'+UNITS[S.su]+'</button>'+
+       '<button type="button" class="sbtn" data-act="options" data-k="Options" style="padding:1px 4px 1px 22px">Options</button></div>';
+    if(S.opt){
+      var OPT=["Accuracy 1st","Muz Vel Table","Drag Coef Table","Target Speed Est","Target Range Est","Truing Drop",S.cor?"Show Coriolis *":"Show Coriolis","Set Clicks","Gun Note"];
+      h+='<button type="button" class="optbg" data-act="optclose" aria-label="Menu sluiten"></button><div class="optpop" role="menu">'+OPT.map(function(o,i){return '<button type="button" role="menuitem" class="'+(i===0?'on':'')+'" data-opt="'+i+'" data-k="Opt'+i+'">'+o+'</button>';}).join("")+'</div>';
+    }
+  } else if(S.screen==="target"){
+    var ic=(Math.round(Math.cos(t.ia*Math.PI/180)*100)/100);
+    h+='<div class="tgt-form">'+
+      fld("Latitude","t-lat",t.lat,"Latitude")+fld("Dir of Fire (deg from N)","t-dof",t.dof,"DoF")+
+      '<div class="f" data-k="WS"><label for="t-ws">Wind Speed (m/s)</label><span class="pair"><span class="sub">1</span><input id="t-ws" inputmode="decimal" value="'+t.ws+'"><span class="sub">2</span><input id="t-ws2" inputmode="decimal" value="'+t.ws2+'" aria-label="Wind Speed 2"></span></div>'+
+      fld("Wind Direction (clock)","t-wd",t.wd,"WD")+
+      '<div class="f" data-k="IA"><label for="t-iad">Inclination Angle</label><span class="pair"><span class="sub">c</span><input id="t-iac" inputmode="decimal" value="'+ic+'" aria-label="Inclination Angle cosinus"><span class="sub">d</span><input id="t-iad" inputmode="decimal" value="'+t.ia+'"></span></div>'+
+      '<div class="f" data-k="TS"><label for="t-ts">Target Speed (m/s)</label><span class="pair"><button class="sbtn" type="button" data-act="tsdir" data-k="TSdir" aria-label="Looprichting">'+(t.dir==="R"?"&gt;":"&lt;")+'</button><input id="t-ts" inputmode="decimal" value="'+t.ts+'"></span></div>'+
+      fld("Target Range (meters)","t-tr",t.tr,"TR")+
+      '</div><div class="tbar"><button type="button" data-act="done" data-k="Done">Done</button><button type="button" data-act="cancel" data-k="Cancel">Cancel</button><button type="button" data-act="noopkey" data-k="PrevNext">Prev</button><button type="button" data-act="noopkey" data-k="PrevNext">Next</button></div>';
+  } else if(S.screen==="gunlist"){
+    h+='<div class="gl"><div class="gl-l"><div class="gl-h">AtragGun.gun</div><div class="list" id="gl-list" style="position:relative">'+GUNS.map(function(g,i){return '<button type="button" class="'+(i===S.pick?'on':'')+'" data-pick="'+i+'" data-k="GunPick">'+esc(g.n)+'</button>';}).join("")+'</div></div>'+
+      '<div class="gl-r"><button type="button" class="sbtn" data-act="opengun" data-k="OpenGun">Open Gun</button><button type="button" class="sbtn" data-act="noopkey" data-k="SaveGun">Save Gun</button><button type="button" class="sbtn" data-act="noopkey" data-k="AddGun">Add New Gun</button><span></span>'+
+      '<button type="button" class="sbtn" data-act="noopkey" data-k="DelGun">Delete Gun</button><button type="button" class="sbtn" data-act="noopkey" data-k="Note">Note</button><span class="gl-sp"></span><button type="button" class="sbtn" data-act="cancel" data-k="GunDone">Done</button></div></div>';
+  } else if(S.screen==="trassist"){
+    var A=S.ra;
+    h+='<div class="ra"><p class="ra-note">When using WIDTH to size a target, UP/Down Angle does not effect range calculation but will effect bullet drop.</p>'+
+      '<div class="ra-r"><span class="ra-l">Using Target:</span><span class="ra-hw" data-k="RAhw"><button type="button" class="u'+(A.useH?' on':'')+'" data-act="rah">Height</button><button type="button" class="u'+(A.useH?'':' on')+'" data-act="raw">Width</button></span></div>'+
+      '<div class="ra-r" data-k="RAsize"><span class="ra-l">Target Size</span><button type="button" class="sbtn ra-x" data-act="ra0" data-k="RAx">!</button><input id="ra-ts" inputmode="decimal" value="'+esc(A.ts)+'" aria-label="Target Size"><button type="button" class="sbtn ra-u" data-act="rau1" data-k="RAunit">'+RA_TU[A.tsu]+'</button></div>'+
+      '<div class="ra-r" data-k="RAimg"><span class="ra-l">Image Size</span><button type="button" class="sbtn ra-x" data-act="ra1" data-k="RAx">!</button><input id="ra-is" inputmode="decimal" value="'+esc(A.is)+'" aria-label="Image Size"><button type="button" class="sbtn ra-u" data-act="rau2" data-k="RAunit">'+RA_IU[A.isu]+'</button></div>'+
+      '<div class="ra-r" data-k="RAang"><span class="ra-l">Angle</span><span class="ra-x"></span><input id="ra-an" inputmode="decimal" value="'+esc(A.an)+'" aria-label="Angle"><span class="ra-u"></span></div>'+
+      '<div class="ra-r" data-k="RAest"><span class="ra-l">Est Range</span><button type="button" class="sbtn ra-x" data-act="ra2" data-k="RAx">!</button><input id="ra-er" inputmode="decimal" value="'+esc(A.er)+'" aria-label="Est Range"><span class="ra-u" style="background:none">Meters</span></div>'+
+      '</div><div class="tbar" style="margin-top:14px"><button type="button" data-act="radone" data-k="RAdone">Done</button><button type="button" data-act="cancel" data-k="Cancel">Cancel</button><button type="button" data-act="noopkey" data-k="PrevNext">Prev</button><button type="button" data-act="noopkey" data-k="PrevNext">Next</button></div>';
+  } else if(S.screen==="tsassist"){
+    var B=S.sa;
+    h+='<div class="ra" style="padding-top:64px">'+
+      '<div class="sa-r" data-k="SAtr"><span class="ra-l">Target Range</span><input id="sa-tr" inputmode="decimal" value="'+esc(B.tr)+'" aria-label="Target Range"><span>Meters</span></div>'+
+      '<div class="sa-r" data-k="SAnt"><span class="ra-l">Num Ticks</span><input id="sa-nt" inputmode="decimal" value="'+esc(B.nt)+'" aria-label="Num Ticks"><button type="button" class="sbtn ra-u" data-act="sau" data-k="SAunit">'+RA_IU[B.ntu]+'</button></div>'+
+      '<div class="sa-r" data-k="SAtm"><span class="ra-l">Time (secs)</span><input id="sa-tm" inputmode="decimal" value="'+esc(B.tm)+'" aria-label="Time"><button type="button" class="sbtn ra-u" data-act="sastart" data-k="SAstart">Start</button></div>'+
+      '<div class="sa-r" data-k="SAest"><span class="ra-l">Est Speed</span><span class="ra-u" style="text-align:right">'+esc(B.est)+'</span><span>m/s</span></div>'+
+      '</div><div class="tbar" style="margin-top:14px"><button type="button" data-act="sadone" data-k="SAdone">Done</button><button type="button" data-act="cancel" data-k="Cancel">Cancel</button><button type="button" data-act="noopkey" data-k="PrevNext">Prev</button><button type="button" data-act="noopkey" data-k="PrevNext">Next</button></div>';
+  } else if(S.screen==="satimer"){
+    h+='<div class="sa-timer"><div class="sa-time" id="sa-run">0.0</div><button type="button" class="sbtn sa-stop" data-act="sastop" data-k="SAstop">Stop</button></div>';
+  } else if(S.screen==="gun"){
+    var gg=curGun();
+    h+='<div class="ra" style="padding-top:66px">'+
+      gf("Bore&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(cm)","g-bh",r2(gg.bh),"GBH")+gf("Bullet Weight (grams)","g-bw",Math.round(gg.bw*10)/10,"GBW")+
+      gf("Bullet Diam&nbsp;&nbsp;(cm)","g-d",Math.round(gg.d/10*1000)/1000,"GBD")+gf("C1 Coefficient","g-c1",Math.round(-gg.af*1000*1000)/1000,"GC1")+
+      gf("Rifle Twist (cm/trn)","g-tw",Math.round(gg.tw*100)/100,"GTW")+gf("Muzzle Velocity (m/s)","g-mv",Math.round(gg.mv),"GMV")+gf("Zero Range (meters)","g-zr",Math.round(gg.zr),"GZR")+
+      '</div><div class="tbar" style="margin-top:34px"><button type="button" data-act="gundone" data-k="GDone">Done</button><button type="button" data-act="cancel" data-k="Cancel">Cancel</button><button type="button" data-act="noopkey" data-k="PrevNext">Prev</button><button type="button" data-act="noopkey" data-k="PrevNext">Next</button></div>';
+  } else if(S.screen==="setclicks"){
+    var T=S.clkT;
+    h+='<div class="ra" style="padding-top:100px">'+
+      '<fieldset class="atm-cm sc-f" data-k="SCn"><legend>Show result in</legend>'+[1,2,3,4,8,10].map(function(n){return '<button type="button" class="u'+(T.n===n?' on':'')+'" data-scn="'+n+'">'+n+'</button>';}).join("")+'</fieldset>'+
+      '<fieldset class="atm-cm sc-f" data-k="SCu"><legend>Clicks per</legend>'+["TMOA","SMOA","MILS"].map(function(u,i){return '<button type="button" class="u'+(T.u===i?' on':'')+'" data-scu="'+i+'">'+u+'</button>';}).join("")+'</fieldset>'+
+      '<div class="sc-b"><button type="button" class="sbtn" data-act="scdone" data-k="SCdone">Done</button><button type="button" class="sbtn" data-act="cancel" data-k="Cancel">Cancel</button></div></div>';
+  } else if(S.screen==="atm"){
+    var M2=S.unit==="M", W=S.atmE;
+    var lt=M2?"temperature (C)":"temperature (F)", lb=M2?"Barom Pres (milibars)":"Barom Pres (in.merc.)", la=M2?"Altitude (m)":"Altitude (ft)";
+    h+='<div class="ra" style="padding-top:96px">'+
+      '<div class="atm-top"><button type="button" class="sbtn" data-act="atmdef" data-k="ATdef">Default</button><fieldset class="atm-cm" data-k="ATcm"><legend>Calc Method</legend><button type="button" class="u'+(W.tbh?'':' on')+'" data-act="atmat">AT</button><button type="button" class="u'+(W.tbh?' on':'')+'" data-act="atmtbh">TBH</button></fieldset></div>'+
+      (W.tbh?'':'<div class="sa-r atm-r" data-k="ATalt"><span>'+la+'</span><input id="at-a" inputmode="decimal" value="'+atmShow("a")+'" aria-label="'+la+'"></div>')+
+      '<div class="sa-r atm-r" data-k="ATt"><span>'+lt+'</span><input id="at-t" inputmode="decimal" value="'+atmShow("t")+'" aria-label="'+lt+'"></div>'+
+      (W.tbh?'<div class="sa-r atm-r" data-k="ATbp"><span>'+lb+'</span><input id="at-b" inputmode="decimal" value="'+atmShow("b")+'" aria-label="'+lb+'"></div>'+
+             '<div class="sa-r atm-r" data-k="ATrh"><span>Relative Humidity (%)</span><input id="at-h" inputmode="decimal" value="'+atmShow("h")+'" aria-label="Relative Humidity"></div>':'')+
+      '</div><div class="tbar" style="margin-top:26px"><button type="button" data-act="atmdone" data-k="ATdone">Done</button><button type="button" data-act="cancel" data-k="Cancel">Cancel</button><button type="button" data-act="noopkey" data-k="PrevNext">Prev</button><button type="button" data-act="noopkey" data-k="PrevNext">Next</button></div>';
+  } else if(S.screen==="rc"){
+    var t2=S.slots[S.slot], rows="", sos=331.3*Math.sqrt(1+15/273.15);
+    for(var m=S.rcs.start; m<=S.rcs.end && m<=3000; m+=S.rcs.inc){
+      if(m<=0) continue;
+      var q=solve(gun,m,t2.ts,t2.ia), last;
+      if(S.rcCol===0) last=String(S.wind2?0:r2(q.lead)); else if(S.rcCol===1) last=String(Math.round(q.v)); else if(S.rcCol===2) last=String(Math.round(q.e)); else last=String(r2(q.tof));
+      rows+='<tr><td>'+m+(q.v<sos?'*':'')+'</td><td>'+String(inUnit(q.elev))+'</td><td>0</td><td>'+last+'</td></tr>';
+    }
+    h+='<div class="rc-top"><span>'+UNITS[S.su]+'</span><span class="rc-btns"><button type="button" class="sbtn" data-act="rcsetup" data-k="RCsetup">Setup</button><button type="button" class="sbtn" data-act="cancel" data-k="RCdone">Done</button></span></div>'+
+      '<div class="rcwrap"><table class="rc"><thead><tr><th>Meters</th><th>Elev</th><th>Wind</th><th><button type="button" class="rc-col" data-act="rccol" data-k="RCcol">'+RC_COLS[S.rcCol]+'</button></th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  } else if(S.screen==="rcsetup"){
+    h+='<div class="ra" style="padding-top:150px">'+
+      '<div class="sa-r" data-k="RCstart"><span class="ra-l">Start Range</span><input id="rc-s" inputmode="numeric" value="'+S.rcs.start+'" aria-label="Start Range"><span></span></div>'+
+      '<div class="sa-r" data-k="RCend"><span class="ra-l">End Range</span><input id="rc-e" inputmode="numeric" value="'+S.rcs.end+'" aria-label="End Range"><span></span></div>'+
+      '<div class="sa-r" data-k="RCinc"><span class="ra-l">Increment</span><input id="rc-i" inputmode="numeric" value="'+S.rcs.inc+'" aria-label="Increment"><span></span></div>'+
+      '</div><div class="tbar" style="margin-top:40px"><button type="button" data-act="rcsdone" data-k="RCsdone">Done</button><button type="button" data-act="rcscancel" data-k="Cancel">Cancel</button><button type="button" data-act="noopkey" data-k="PrevNext">Prev</button><button type="button" data-act="noopkey" data-k="PrevNext">Next</button></div>';
+  } else {
+    var msg={mv:["Muzzle Velocity","Tabel met mondingssnelheid per temperatuur. Op onze server telt temperatuur niet mee. Niets wijzigen."],
+             drag:["Drag Coef Table","Tabel met luchtweerstand per snelheid. Op onze server niet nodig. Niets wijzigen."],
+             truing:["Truing Drop","Profiel bijstellen op basis van echte inslagen. Niet aanpassen zonder overleg met je teamleider."],
+             noop:["Options","Dit onderdeel heb je bij LT niet nodig."]}[S.screen]||["",""];
+    h+='<div class="title-bar">'+msg[0]+'</div><p class="msg">'+msg[1]+'</p><div class="bot"><button type="button" class="sbtn" data-act="cancel">Done</button></div>';
+  }
+  var pg=el("gl-list"), prevTop=pg?pg.scrollTop:null;
+  sc.innerHTML=h;
+  var gl=el("gl-list"), on=sc.querySelector("#gl-list .on"); if(gl){ if(prevTop!=null) gl.scrollTop=prevTop; else if(on) gl.scrollTop=on.offsetTop-120; }
+  sc.classList.toggle("explaining",S.tab==="uitleg");
+  highlight();
+}
+function resBox(r,t){
+  var e=r?fmtElev(r.elev):"0.0", ld=S.wind2?"0.0":(r?fmtLead(r.lead,t.dir):"0.0");
+  var leadBtn='<span><button type="button" class="sbtn" data-act="lead" data-k="Lead" style="margin-left:-6px">'+(S.wind2?"Wind2":"Lead")+'</button></span><span class="box" data-k="Lead">'+ld+'</span><span></span><span></span>';
+  if(S.cor){
+    return '<div class="resbox" data-k="Result"><span></span><span class="h" data-k="Hold">Hold</span><span class="h" data-k="Cor">Cor</span><span class="h" data-k="Spin">Spin</span>'+
+      '<span data-k="Elev">Elev</span><span class="box" data-k="Hold">'+e+'</span><span class="box" data-k="Cor">0.0</span><span></span>'+
+      '<span data-k="Wind">Wind</span><span class="box" data-k="Wind">0.0</span><span class="box" data-k="Cor">0.0</span><span class="box" data-k="Spin">0.0</span>'+leadBtn+'</div>';
+  }
+  var clicks=S.su===3, rel=r?fmtElev(r.elev-S.cur):"0.0", cur=fmtElev(S.cur);
+  return '<div class="resbox" data-k="Result"><span></span><span class="h" data-k="Abs">Abs</span><span class="h" data-k="Rel">'+(clicks?"Rel":"")+'</span><span class="h" data-k="Cur">'+(clicks?"Cur":"")+'</span>'+
+    '<span data-k="Elev">Elev</span><span class="box" data-k="Abs">'+e+'</span>'+(clicks?'<span class="box" data-k="Rel">'+rel+'</span><span class="box" data-k="Cur">'+cur+'</span>':'<span></span><span></span>')+
+    '<span data-k="Wind">Wind</span><span class="box" data-k="Wind">0.0</span>'+(clicks?'<span class="box">0.0</span><span class="box">0.0</span>':'<span></span><span></span>')+leadBtn+
+    (clicks?'<span></span><span></span><span><button type="button" class="sbtn" data-act="reset" data-k="Reset">Reset</button></span><span><button type="button" class="sbtn" data-act="update" data-k="Update">Update</button></span>':'')+'</div>';
+}
+var RA_TU=["in","ft","cm","m"], RA_TF=[0.0254,0.3048,0.01,1], RA_IU=["MIL","TMOA","IOA"];
+function openRA(){var t=S.slots[S.slot]; S.ra.an=String(t.ia); S.ra.er=String(t.tr); S.screen="trassist";}
+function raRead(){var A=S.ra; A.ts=el("ra-ts").value; A.is=el("ra-is").value; A.an=el("ra-an").value; A.er=el("ra-er").value;}
+function raCalc(which){
+  raRead(); var A=S.ra, D=Math.PI/180;
+  var ang=num(A.an), size=Math.abs(num(A.ts)); if(A.useH) size=size*Math.cos(ang*D); size*=RA_TF[A.tsu];
+  var img=num(A.is); img = A.isu===0 ? img/6400*360 : A.isu===1 ? img/60 : img/60/1.047;
+  var est=Math.abs(num(A.er));
+  if(which===0){ var t=Math.tan(img*D)*est; if(A.useH&&Math.cos(ang*D)!==0) t=t/Math.cos(ang*D); A.ts=String(r2(t/RA_TF[A.tsu])); }
+  else if(which===1){ if(est>0) img=Math.atan(size/est)/D; var o = A.isu===0 ? img*6400/360 : A.isu===1 ? img*60 : img*60*1.047; A.is=String(r2(o)); }
+  else { if(Math.tan(img*D)!==0) A.er=String(Math.round(size/Math.tan(img*D))); }
+}
+function openSA(){var t=S.slots[S.slot]; S.sa.tr=String(t.tr); S.sa.est="0"; S.screen="tsassist";}
+function saRead(){var B=S.sa; if(!el("sa-tr")) return; B.tr=el("sa-tr").value; B.nt=el("sa-nt").value; B.tm=el("sa-tm").value;}
+function saCalc(){
+  saRead(); var B=S.sa, D=Math.PI/180, tr=num(B.tr), nt=num(B.nt), tm=num(B.tm), e=0;
+  nt = S.ra.isu===0 ? nt/6400*360 : S.ra.isu===1 ? nt/60 : nt/60/1.047;
+  if(tm>0) e=Math.tan(nt*D)*tr/tm;
+  B.est=String(Math.round(e*10)/10);
+}
+var saStart=0, saTick=null;
+var RC_COLS=["Lead","RemV","RemE","TmFlt"];
+function atmShow(k){var W=S.atmE, M2=S.unit==="M";
+  if(k==="t") return String(M2?Math.round(W.t*10)/10:Math.round((W.t*1.8+32)*10)/10);
+  if(k==="b") return String(M2?Math.round(W.b):Math.round(W.b/33.8638866667*100)/100);
+  if(k==="h") return String(Math.round(W.h*1000)/10);
+  return String(M2?Math.round(W.a):Math.round(W.a*3.2808399));}
+function atmRead(){var W=S.atmE, M2=S.unit==="M", x;
+  if(el("at-t")){x=num(el("at-t").value); W.t=M2?x:(x-32)/1.8;}
+  if(el("at-b")){x=num(el("at-b").value); W.b=M2?x:x*33.8638866667;}
+  if(el("at-h")){W.h=Math.max(0,Math.min(1,num(el("at-h").value)/100));}
+  if(el("at-a")){x=num(el("at-a").value); W.a=M2?x:x/3.2808399;}}
+function gf(label,id,val,k){return '<div class="sa-r atm-r" data-k="'+k+'"><span>'+label+'</span><input id="'+id+'" inputmode="decimal" value="'+esc(val)+'"></div>';}
+function cl(v,lo,hi){return Math.max(lo,Math.min(hi,v));}
+function cr(k,v,dk){return '<div class="cr" data-k="'+(dk||k)+'"><span>'+k+'</span><span class="v">'+esc(v)+'</span></div>';}
+function fld(label,id,val,k){return '<div class="f" data-k="'+k+'"><label for="'+id+'">'+label+'</label><input id="'+id+'" inputmode="decimal" value="'+esc(val)+'"></div>';}
+
+function num(v){var x=parseFloat(String(v).replace(",","."));return isFinite(x)?x:0;}
+function readTarget(){
+  var t=S.slots[S.slot];
+  t.lat=el("t-lat").value; t.dof=el("t-dof").value;
+  t.ws=num(el("t-ws").value); t.ws2=num(el("t-ws2").value); t.wd=num(el("t-wd").value);
+  var d=Math.max(-60,Math.min(60,Math.round(num(el("t-iad").value)))), c=Math.max(0.5,Math.min(1,num(el("t-iac").value)));
+  if(d!==t.ia) t.ia=d; else if(c!==Math.round(Math.cos(t.ia*Math.PI/180)*100)/100) t.ia=Math.round(Math.acos(c)*180/Math.PI);
+  t.wd=Math.max(1,Math.min(12,Math.round(t.wd))); t.ts=Math.max(0,num(el("t-ts").value)); t.tr=Math.max(0,Math.round(num(el("t-tr").value)));
+}
+function calc(){var t=S.slots[S.slot]; t.res=solve(curGun(),t.tr,t.ts,t.ia);}
+function recalcAll(){S.slots.forEach(function(s){s.res=solve(curGun(),s.tr,s.ts,s.ia);});}
+
+el("screen").addEventListener("click",function(e){
+  var b=e.target.closest("button,[data-k]"); if(!b) return;
+  var act=b.getAttribute("data-act"), isBtn=b.tagName==="BUTTON";
+  if(S.tab==="uitleg" && b.getAttribute("data-k")) setExplain(b.getAttribute("data-k"));
+  if(!isBtn) return;
+  if(b.getAttribute("data-unit")){S.unit=b.getAttribute("data-unit");}
+  else if(b.getAttribute("data-slot")!=null){S.slot=+b.getAttribute("data-slot");}
+  else if(b.getAttribute("data-pick")!=null){S.pick=+b.getAttribute("data-pick");}
+  else if(act==="opengun"){S.gun=S.pick; S.wm=null; S.clk={u:2,n:10}; recalcAll(); S.screen="main";}
+  else if(b.getAttribute("data-opt")!=null){var o=+b.getAttribute("data-opt"); if(S.tab==="uitleg") setExplain("Opt"+o);
+    if(o>0){ S.opt=false;
+      if(o===3) openSA(); else if(o===4) openRA();
+      else if(o===6) S.cor=!S.cor; else if(o===7){ S.clkT={u:S.clk.u,n:S.clk.n}; S.screen="setclicks"; } }}
+  else if(act==="options"){S.opt=!S.opt;}
+  else if(b.getAttribute("data-scn")){S.clkT.n=+b.getAttribute("data-scn");}
+  else if(b.getAttribute("data-scu")){S.clkT.u=+b.getAttribute("data-scu");}
+  else if(act==="scdone"){S.clk=S.clkT; S.screen="main";}
+  else if(act==="gun"){S.screen="gun";}
+  else if(act==="gundone"){var w=JSON.parse(JSON.stringify(curGun()));
+    w.bh=cl(num(el("g-bh").value),0.1,10); w.bw=cl(num(el("g-bw").value),1,100); w.d=cl(num(el("g-d").value),0.1,2.5)*10;
+    w.af=num(el("g-c1").value)/-1000; w.tw=cl(num(el("g-tw").value),-75,75); w.mv=cl(num(el("g-mv").value),100,1400); w.zr=cl(num(el("g-zr").value),25,1000);
+    S.wm=w; recalcAll(); S.screen="main";}
+  else if(act==="atm"){S.atmE=JSON.parse(JSON.stringify(S.atm)); S.screen="atm";}
+  else if(act==="atmat"||act==="atmtbh"){atmRead(); S.atmE.tbh=(act==="atmtbh");}
+  else if(act==="atmdef"){S.atmE={tbh:true,t:15,b:1013.25,h:0,a:0};}
+  else if(act==="atmdone"){atmRead(); S.atm=S.atmE; S.screen="main";}
+  else if(act==="rcsetup"){S.screen="rcsetup";}
+  else if(act==="rcscancel"){S.screen="rc";}
+  else if(act==="rcsdone"){var cl=function(v,lo){return Math.max(lo,Math.min(3000,Math.round(num(v))));}; S.rcs={start:cl(el("rc-s").value,0), end:cl(el("rc-e").value,0), inc:cl(el("rc-i").value,1)}; S.screen="rc";}
+  else if(act==="rccol"){S.rcCol=(S.rcCol+1)%4;}
+  else if(act==="sau"){saRead(); S.sa.ntu=(S.sa.ntu+1)%3;}
+  else if(act==="sastart"){saRead(); S.screen="satimer"; saStart=performance.now(); clearInterval(saTick); saTick=setInterval(function(){var r=el("sa-run"); if(r) r.textContent=((performance.now()-saStart)/1000).toFixed(1);},100);}
+  else if(act==="sastop"){clearInterval(saTick); S.sa.tm=String(Math.round((performance.now()-saStart)/100)/10); S.screen="tsassist"; render(); saCalc();}
+  else if(act==="sadone"){saCalc(); var e=num(S.sa.est); if(e!==0){var st=S.slots[S.slot]; st.ts=e; calc();} S.screen="main";}
+  else if(act==="rah"||act==="raw"){raRead(); S.ra.useH=(act==="rah");}
+  else if(act==="ra0"||act==="ra1"||act==="ra2"){raCalc(+act.slice(2));}
+  else if(act==="rau1"){raRead(); S.ra.tsu=(S.ra.tsu+1)%4;}
+  else if(act==="rau2"){raRead(); S.ra.isu=(S.ra.isu+1)%3;}
+  else if(act==="radone"){raRead(); var ts=S.slots[S.slot]; ts.ia=Math.round(num(S.ra.an)); ts.tr=Math.max(0,Math.round(num(S.ra.er))); calc(); S.screen="main";}
+  else if(act==="optclose"){S.opt=false;}
+  else if(act==="update"){var rr=S.slots[S.slot].res; if(rr) S.cur=rr.elev;}
+  else if(act==="reset"){S.cur=0;}
+  else if(act==="target"){S.screen="target";}
+  else if(act==="done"){readTarget(); calc(); S.screen="main";}
+  else if(act==="cancel"){S.screen="main";}
+  else if(act==="noopkey"){ }
+  else if(act==="tsdir"){readTarget(); var t=S.slots[S.slot]; t.dir=t.dir==="R"?"L":"R";}
+  else if(act==="su"){S.su=(S.su+1)%4;}
+  else if(act==="lead"){S.wind2=!S.wind2;}
+  else if(act==="gunlist"){S.pick=S.gun; S.screen="gunlist";}
+  else if(act==="tsassist"){openSA();}
+  else if(act==="trassist"){openRA();}
+  else if(act==="mv"){ }
+  else if(["rc","trassist","tsassist"].indexOf(act)>=0){S.screen=act;}
+  else return;
+  render(); check();
+});
+el("screen").addEventListener("dblclick",function(e){var b=e.target.closest("[data-pick]"); if(b){S.gun=+b.getAttribute("data-pick"); S.wm=null; S.clk={u:2,n:10}; recalcAll(); S.screen="main"; render(); check();}});
+el("screen").addEventListener("keyup",function(e){ if(e.key==="Enter" && S.screen==="tsassist" && (e.target.id==="sa-nt"||e.target.id==="sa-tm"||e.target.id==="sa-tr")){ saCalc(); render(); }});
+el("screen").addEventListener("input",function(){ if(S.screen==="target"){ readTarget(); check(); }});
+function cycleGun(d){ if(S.screen!=="main") return; S.gun=(S.gun+d+GUNS.length)%GUNS.length; S.wm=null; S.clk={u:2,n:10}; recalcAll(); render(); check(); }
+function key(id,k,fn){el(id).onclick=function(){ if(S.tab==="uitleg") setExplain(k); if(fn) fn(); };}
+key("k-up","k-pad",function(){cycleGun(-1);});
+key("k-down","k-pad",function(){cycleGun(1);});
+key("k-left","k-pad",function(){ if(S.screen==="main"){S.slot=(S.slot+3)%4; render(); check();} });
+key("k-right","k-pad",function(){ if(S.screen==="main"){S.slot=(S.slot+1)%4; render(); check();} });
+key("k-sl","k-soft"); key("k-sr","k-soft"); key("k-win","k-win"); key("k-ok","k-ok"); key("k-power","k-power");
+key("k-enter","k-enter",function(){ clearInterval(saTick); S.slots=[newSlot(),newSlot(),newSlot(),newSlot()]; S.slot=0; S.screen="main"; S.wind2=false; render(); check(); });
+
+// Uitleg per onderdeel: [naam, soort, wat het doet, wat je bij LT doet]
+var EX={
+  Profile:["Profielnaam","use","Het actieve profiel. Elk profiel hoort bij een munitiesoort, niet bij een wapen.","Kies het profiel van de munitie die de schutter geladen heeft. Wissel met ▲ ▼ of via GunList."],
+  Units:["D · E · M","check","Eenheden. M is metrisch: meters, m/s en centimeters. E is Engels: yards en mph. D toont een mix.","Altijd M. Dat is de standaard."],
+  RC:["RC · Range Card","check","Tabel met elevatie per afstand voor het huidige profiel en doel. Standaard 500 tot 2000 m in stappen van 50 m.","Handig als overzicht of reserve. Voor een schot gebruik je Target en Done."],
+  RCsetup:["Setup","check","Opent het scherm met Start Range, End Range en Increment.","Bijvoorbeeld 200 tot 1000 m in stappen van 10 m voor een DMR."],
+  RCdone:["Done","use","Terug naar het hoofdscherm.",""],
+  RCcol:["Laatste kolom","check","Klik om te wisselen: Lead (voorhouden), RemV (restsnelheid m/s), RemE (restenergie ft·lb), TmFlt (vliegtijd s). Een * achter de afstand betekent dat de kogel daar onder de geluidssnelheid zit.","TmFlt of Lead is het nuttigst."],
+  RCstart:["Start Range","check","Eerste afstand in de tabel (0 tot 3000 m).",""],
+  RCend:["End Range","check","Laatste afstand in de tabel (0 tot 3000 m).",""],
+  RCinc:["Increment","check","Stap tussen de regels in meters.",""],
+  RCsdone:["Done","use","Slaat Start, End en Increment op en rekent de tabel opnieuw uit.",""],
+  Gun:["Gun","check","Opent de gegevens van het profiel.","Niets wijzigen. Alleen ZR controleren."],
+  GBH:["Bore (cm)","ignore","Hoogte van de kijker boven de loop.","Niet wijzigen."],
+  GBW:["Bullet Weight (grams)","ignore","Gewicht van de kogel.","Niet wijzigen."],
+  GBD:["Bullet Diam (cm)","ignore","Diameter van de kogel.","Niet wijzigen. Telt alleen mee met Advanced Ballistics."],
+  GC1:["C1 Coefficient","ignore","Zonder Advanced Ballistics is dit de luchtweerstand van de kogel × 1000.","Niet wijzigen. Een andere C1 geeft andere elevaties."],
+  GTW:["Rifle Twist (cm/trn)","ignore","Spoed van de loop.","Niet wijzigen. Telt alleen mee met Advanced Ballistics."],
+  GMV:["Muzzle Velocity (m/s)","check","Mondingssnelheid.","Niet wijzigen zonder overleg. Een andere MV geeft andere elevaties."],
+  GZR:["Zero Range (meters)","check","Nulafstand van de kijker. Hiermee rekent de ATragMX de beginhoek uit.","Gelijk zetten aan de nulafstand van de kijker van de schutter. Standaard 100."],
+  GDone:["Done","check","Neemt de waarden over in het werkgeheugen en rekent opnieuw. Het opgeslagen profiel verandert pas met Save Gun.","Heb je iets per ongeluk gewijzigd? Laad het profiel opnieuw via GunList en Open Gun."],
+  BH:["BH · boorhoogte (cm)","ignore","Hoogte van de kijker boven de loop.","Komt uit het profiel. Laten staan."],
+  BW:["BW · kogelgewicht (g)","ignore","Gewicht van de kogel.","Komt uit het profiel. Laten staan."],
+  C1:["C1","ignore","Zonder Advanced Ballistics toont dit veld de luchtweerstand van de kogel.","Komt uit het profiel. Laten staan."],
+  MV:["MV · mondingssnelheid (m/s)","check","Snelheid waarmee de kogel de loop verlaat. De knop MV doet op onze server niets: de tabel per temperatuur werkt alleen met Advanced Ballistics.","Laten staan. Raak je bij een proefschot steeds te hoog of te laag, meld dat aan je teamleider."],
+  ZR:["ZR · nulafstand (m)","check","Afstand waarop de kijker is ingeschoten. De profielen staan op 100 m.","Moet gelijk zijn aan de nulafstand van de kijker van de schutter. Anders klopt geen enkel getal."],
+  Atmsphr:["Atmsphr","ignore","Temperatuur (Tmp), luchtdruk (BP) en luchtvochtigheid (RH). De knop opent het scherm met Calc Method en de waarden.","Telt op onze server niet mee. Niet aanpassen."],
+  ATdef:["Default","ignore","Zet alles terug: TBH, 15 °C, 1013 mbar, 0 %.","Handig als iemand de waarden heeft veranderd. Telt verder niet mee."],
+  ATcm:["Calc Method: AT · TBH","ignore","AT: rekenen met hoogte en temperatuur. TBH: temperatuur, luchtdruk en luchtvochtigheid.","Laat op TBH staan. Telt niet mee."],
+  ATt:["temperature","ignore","Temperatuur. In °C bij M, in °F bij E of D.","Niet aanpassen. Telt niet mee."],
+  ATbp:["Barom Pres","ignore","Luchtdruk. In millibar bij M, in inch kwik bij E of D.","Niet aanpassen. Telt niet mee."],
+  ATrh:["Relative Humidity (%)","ignore","Luchtvochtigheid.","Niet aanpassen. Telt niet mee."],
+  ATalt:["Altitude","ignore","Hoogte, alleen bij methode AT.","Niet aanpassen. Telt niet mee."],
+  ATdone:["Done","ignore","Slaat de waarden op en gaat terug.","Verandert op onze server niets aan de uitkomst."],
+  Slots:["A · B · C · D","use","Vier doelgeheugens. Elk doel bewaart zijn eigen afstand, snelheid en uitkomst. ◀ ▶ op het apparaat wisselt ook.","Gebruik ze voor meerdere doelen, bijvoorbeeld A voor de schutter en B voor de mitrailleur."],
+  Target:["Target","use","Opent het scherm Target Data. Daar vul je het doel in. Done rekent het schot uit.","Hier begin je elk schot."],
+  WS:["WS · Wind Speed (m/s)","ignore","Windsnelheid. Op het scherm Target Data zijn er twee vakken.","Altijd 0. Wind beweegt de kogel op onze server niet."],
+  WD:["WD · Wind Direction (clock)","ignore","Windrichting als klokpositie. Standaard 12.","Laten staan. Telt niet mee bij windsnelheid 0."],
+  IA:["IA · Inclination Angle","check","Hoek omhoog of omlaag naar het doel. Vak d is de hoek in graden (−60 tot 60), vak c de cosinus. Vul er één in; de ander rekent mee.","d op 0, tenzij je steil omhoog of omlaag schiet, bijvoorbeeld vanaf een berg."],
+  TS:["TS · Target Speed (m/s)","use","Snelheid van het doel. De knop TS opent de snelheidshulp (Target Speed Assist) met stopwatch.","Vul je in op het scherm Target Data. Stilstaand 0, lopend ongeveer 1,5, rennend ongeveer 5."],
+  TSdir:["Looprichting","use","Knop voor het vak Target Speed: &gt; is naar rechts, &lt; is naar links.","Kies de richting waarin het doel loopt. Lead toont dan R of L."],
+  TR:["TR · Target Range (m)","use","Afstand tot het doel. De knop TR opent de afstandshulp (Target Range Assist): doelgrootte plus grootte in mil geeft de afstand.","Vul je in op het scherm Target Data, met de afstand van de Vector. Geen Vector? Gebruik de knop TR."],
+  Latitude:["Latitude","ignore","Breedtegraad, voor Coriolis. Standaard 38.","Laten staan. Telt niet mee."],
+  DoF:["Dir of Fire","ignore","Schietrichting ten opzichte van het noorden, voor Coriolis. Standaard 0.","Laten staan. Telt niet mee."],
+  RAhw:["Using Target: Height · Width","check","Kies of je de hoogte of de breedte van het doel meet.","Meestal Height: een staande man is ongeveer 180 cm. Bij Width telt de hoek niet mee voor de afstand."],
+  RAsize:["Target Size","use","Echte grootte van het doel. Eenheid wisselt met de knop rechts: in, ft, cm, m.","Staande man ongeveer 180 cm hoog, schouders ongeveer 50 cm breed. Laat de eenheid op cm."],
+  RAimg:["Image Size","use","Hoe groot het doel in je vizier is. Eenheid wisselt met de knop rechts: MIL, TMOA, IOA.","Meet met de mil-streepjes in je kijker en vul het aantal in. Laat de eenheid op MIL. Let op: deze MIL is de NAVO-mil (6400 per cirkel), je kijker werkt in milliradialen. De geschatte afstand valt daardoor ongeveer 2 % te ver uit: 180 cm op 2 mil geeft 917 m in plaats van 900 m."],
+  RAang:["Angle","check","Hoek omhoog of omlaag naar het doel, in graden. Gaat bij Done naar Inclination Angle.","0, tenzij je steil omhoog of omlaag kijkt."],
+  RAest:["Est Range","use","Geschatte afstand in meters. Gaat bij Done naar Target Range.","Druk op ! naast Est Range om te rekenen."],
+  RAx:["! (reken dit veld uit)","use","Rekent het veld ernaast uit met de andere twee. ! bij Est Range: afstand uit grootte en mil.","Vul Target Size en Image Size in en druk de ! bij Est Range."],
+  RAunit:["Eenheidknop","check","Wisselt de eenheid van het veld.","Target Size op cm, Image Size op MIL."],
+  RAdone:["Done","use","Zet Est Range in Target Range en Angle in Inclination Angle, en rekent het schot direct uit.","Daarna staat Elev Hold klaar op het hoofdscherm."],
+  SAtr:["Target Range","use","Afstand tot het doel. Wordt ingevuld vanuit het actieve doel.","Klopt de afstand niet, vul eerst Target Range in op het scherm Target Data."],
+  SAnt:["Num Ticks","use","Over hoeveel mil het doel loopt terwijl de stopwatch loopt.","Kies twee streepjes in je kijker, bijvoorbeeld 2 mil uit elkaar, en vul dat getal in."],
+  SAunit:["Eenheidknop Num Ticks","check","Toont MIL, TMOA of IOA. Let op: ACE rekent hier met de eenheid van Image Size in de afstandshulp, niet met deze knop.","Laat deze knop én Image Size in de afstandshulp op MIL staan."],
+  SAtm:["Time (secs)","use","Tijd in seconden. Typ zelf, of gebruik Start.","Druk Start als het doel het eerste streepje passeert."],
+  SAstart:["Start","use","Start de stopwatch. Het scherm toont de lopende tijd en een Stop-knop.","Stop als het doel het tweede streepje passeert."],
+  SAstop:["Stop","use","Stopt de stopwatch, vult Time in en rekent Est Speed uit.",""],
+  SAest:["Est Speed","use","Geschatte snelheid in m/s: afstand × grootte van Num Ticks ÷ tijd.","Controleer of het getal klopt: lopend ongeveer 1,5, rennend ongeveer 5."],
+  SAdone:["Done","use","Zet Est Speed in Target Speed en rekent het schot direct uit. Bij Est Speed 0 verandert er niets.","De looprichting (&gt; of &lt;) stel je in op het scherm Target Data."],
+  PrevNext:["Prev · Next","ignore","Hebben op dit scherm geen functie.","Wisselen van doel doe je op het hoofdscherm met A t/m D of ◀ ▶."],
+  Done:["Done","use","Slaat de doelgegevens op, rekent het schot uit en gaat terug naar het hoofdscherm.","Na het invullen altijd Done. Er is geen aparte rekenknop."],
+  Cancel:["Cancel","use","Terug naar het hoofdscherm zonder op te slaan.",""],
+  Result:["Resultaat","use","Elevatie, wind en voorhouden voor het actieve doel.","Lees Elev in de kolom Hold, en Lead."],
+  Elev:["Elev","use","Elevatie: hoeveel je kijker omhoog moet. Een D achter het getal betekent omlaag (down).","Dit getal geeft de spotter door. De schutter draait het in, afgerond op 0,1 mil."],
+  Hold:["Hold","use","De totale correctie vanaf de nulstand van je kijker.","Elev Hold is het getal dat je indraait of boven houdt."],
+  Cor:["Cor · Coriolis","ignore","Correctie voor de draaiing van de aarde.","Bij ons altijd 0.0. Negeren."],
+  Spin:["Spin · spin drift","ignore","Zijwaartse afwijking door de draaiing van de kogel.","Bij ons altijd 0.0. Negeren."],
+  Wind:["Wind","ignore","Windcorrectie, R of L.","Bij ons altijd 0.0. Negeren."],
+  Lead:["Lead","use","Voorhouden voor een bewegend doel, met R of L voor de richting. De knop wisselt naar Wind2.","Houd zoveel mil voor in de looprichting. Staat er Wind2, druk dan op de knop om terug te gaan naar Lead."],
+  GunList:["GunList","use","Opent de lijst met alle 33 profielen (bestand AtragGun.gun).","Kies een profiel en druk Open Gun. Sneller dan bladeren met ▲ ▼."],
+  GunPick:["Profiel in de lijst","use","Klik om te selecteren. Dubbelklik laadt het profiel meteen.","Selecteren alleen is niet genoeg: druk daarna op Open Gun."],
+  OpenGun:["Open Gun","use","Laadt het geselecteerde profiel en gaat terug naar het hoofdscherm.","Dit is de knop die je nodig hebt."],
+  SaveGun:["Save Gun","never","Overschrijft het geselecteerde profiel met de huidige waarden.","Niet gebruiken. Een fout opgeslagen profiel geeft bij elk volgend schot een verkeerde elevatie."],
+  AddGun:["Add New Gun","ignore","Maakt een nieuw profiel aan.","Niet nodig. Gebruik de standaardprofielen."],
+  DelGun:["Delete Gun","never","Verwijdert het geselecteerde profiel.","Niet gebruiken."],
+  Note:["Note","ignore","Notitie bij het profiel.","Niet nodig."],
+  GunDone:["Done","use","Terug naar het hoofdscherm zonder een ander profiel te laden.","Heb je een profiel gekozen, druk dan Open Gun in plaats van Done."],
+  ScopeUnit:["MILs","check","Eenheid van het resultaat. Drukken wisselt: MILs, TMOA, SMOA, Clicks.","Altijd MILs. Onze kijkers draaien 0,1 mil per klik."],
+  Options:["Options","check","Opent een menu over het hoofdscherm. Klik op een regel om die te kiezen. Klik naast het menu of nogmaals op Options om te sluiten.","Alleen Target Speed Est en Target Range Est zijn handig. Show Coriolis aan laten staan (met *)."],
+  Abs:["Abs","check","Zie je alleen als Show Coriolis uit staat. Zelfde getal als Hold.","Zet Show Coriolis weer aan via Options."],
+  Rel:["Rel","ignore","Alleen zichtbaar met Show Coriolis uit en eenheid Clicks: wat je nog moet bijdraaien vanaf Cur.","Niet nodig bij onze werkwijze."],
+  Cur:["Cur","ignore","Alleen zichtbaar met Show Coriolis uit en eenheid Clicks: wat er nu op je toren staat.","Niet nodig bij onze werkwijze."],
+  Update:["Update","ignore","Zet Cur gelijk aan de huidige oplossing. Alleen in Clicks met Show Coriolis uit.","Niet nodig bij onze werkwijze."],
+  Reset:["Reset","ignore","Zet Cur terug op 0. Alleen in Clicks met Show Coriolis uit.","Niet nodig bij onze werkwijze."],
+  Opt0:["Accuracy 1st","ignore","Doet niets in ACE; het menu blijft open.","Niet nodig. Klik naast het menu of op Options om het te sluiten."],
+  Opt1:["Muz Vel Table","ignore","Doet op onze server niets; alleen het menu sluit. Werkt alleen met Advanced Ballistics.","Niet nodig."],
+  Opt2:["Drag Coef Table","ignore","Doet op onze server niets; alleen het menu sluit. Werkt alleen met Advanced Ballistics.","Niet nodig."],
+  Opt3:["Target Speed Est","use","Snelheidshulp met stopwatch.","Handig als je de snelheid van een doel niet weet."],
+  Opt4:["Target Range Est","use","Afstandshulp met doelgrootte en mil.","Handig zonder Vector."],
+  Opt5:["Truing Drop","ignore","Doet op onze server niets; alleen het menu sluit. Werkt alleen met Advanced Ballistics.","Niet nodig."],
+  Opt6:["Show Coriolis *","check","Schakelt direct om. Met * (aan): het resultaat toont Hold, Cor en Spin. Zonder * (uit): alleen Abs, en in Clicks ook Rel, Cur, Reset en Update.","Aan laten staan, met *. Per ongeluk uitgezet? Kies het nog een keer."],
+  Opt7:["Set Clicks","ignore","Opent het scherm met het aantal klikken per eenheid van je kijker. Telt alleen als het resultaat in Clicks staat.","Niet nodig: wij werken in MILs. Laat op 10 en MILS staan."],
+  SCn:["Show result in","ignore","Aantal klikken per eenheid: 1, 2, 3, 4, 8 of 10. 10 per MIL betekent 0,1 mil per klik.","Laat op 10 staan."],
+  SCu:["Clicks per","ignore","Eenheid van de klikken: TMOA, SMOA of MILS.","Laat op MILS staan."],
+  SCdone:["Done","ignore","Slaat de klikinstelling op. Wordt alleen gebruikt als de eenheid onderaan op Clicks staat.",""],
+  Opt8:["Gun Note","ignore","Doet niets in ACE; het menu sluit.","Niet nodig."],
+  "k-pad":["Pijltjes","use","▲ ▼ wisselen van profiel. ◀ ▶ wisselen van doel (A t/m D).",""],
+  "k-enter":["Enter ↵","never","Zet de ATragMX terug naar de beginwaarden. Alle doelen zijn dan leeg.","Niet gebruiken tijdens een opdracht."],
+  "k-power":["Aan/uit","use","Sluit de ATragMX.","Openen doe je met ACE-zelfinteractie > Equipment > Open ATragMX."],
+  "k-soft":["Softkeys –","ignore","Hebben in ACE geen functie.",""],
+  "k-win":["Windows-toets","ignore","Heeft in ACE geen functie.",""],
+  "k-ok":["OK","ignore","Heeft in ACE geen functie. Bevestigen doe je met Done op het scherm.",""]
+};
+var LEGEND=["Profile","Units","ZR","Atmsphr","Slots","Target","TR","TS","Done","Hold","Elev","Lead","Cor","ScopeUnit","Options","k-enter"];
+var CHIP={use:["Gebruiken","use"],check:["Controleren","check"],ignore:["Negeren","ignore"],never:["Niet indrukken","never"]};
+var ONTARGET=["WS","WD","IA","TS","TR","Done","TSdir","Latitude","DoF"];
+function setExplain(k){
+  if(!EX[k]) return; S.explain=k; var x=EX[k], c=CHIP[x[1]];
+  el("explain").innerHTML='<div class="name">'+x[0]+'</div><div><span class="chip '+c[1]+'">'+c[0]+'</span></div><p style="margin:0">'+x[2]+'</p>'+(x[3]?'<div class="lt"><b>Bij LT:</b> '+x[3]+'</div>':'');
+  [].forEach.call(document.querySelectorAll("#legend button"),function(b){b.classList.toggle("on",b.getAttribute("data-key")===k);});
+  highlight();
+}
+el("legend").innerHTML=LEGEND.map(function(k){var x=EX[k];return '<button type="button" data-key="'+k+'"><span>'+x[0].split(" · ")[0]+'</span><span class="dot '+(x[1]==="use"?"ok":x[1]==="check"?"warn":"no")+'"></span></button>';}).join("");
+el("legend").addEventListener("click",function(e){var b=e.target.closest("button"); if(!b) return; var k=b.getAttribute("data-key");
+  var want=(k==="Done"?"target":"main"); if(S.screen!==want){S.screen=want; render();}
+  setExplain(k);});
+
+// Stap voor stap
+var STEPS=[
+  {t:"Kies het profiel 7.62x51mm M80",d:"Je schutter heeft een M40A5 met standaard 7.62×51 mm. Druk GunList, selecteer 7.62x51mm M80 en druk Open Gun. Bladeren met ▲ ▼ kan ook.",k:"Profile",ok:function(){return S.gun===gi("7.62x51mm M80")&&S.screen==="main";}},
+  {t:"Controleer ZR, M en MILs",d:"ZR moet 100 zijn, gelijk aan de nulafstand van de kijker. Bovenaan staat M zwart, onderaan staat MILs, en het resultaat toont Hold, Cor en Spin.",k:"ZR",ok:function(){return S.unit==="M"&&S.su===0&&S.cor;},ack:true},
+  {t:"Laat Atmsphr met rust",d:"Tmp, BP en RH tellen op onze server niet mee.",k:"Atmsphr",ok:function(){return true;},ack:true},
+  {t:"Druk op Target",d:"Doel A is actief (zwart). Je opent het scherm Target Data.",k:"Target",ok:function(){return S.screen==="target"&&S.slot===0;}},
+  {t:"Vul Target Range in: 550",d:"Je spotter meldt: vijand bij de schuur, 550 meter, stilstaand. Wind Speed blijft 0; Latitude en Dir of Fire laat je staan.",k:"TR",ok:function(){return S.slots[0].tr===550&&S.slots[0].ws===0;}},
+  {t:"Druk op Done",d:"De ATragMX rekent en gaat terug naar het hoofdscherm.",k:"Done",ok:function(){var s=S.slots[0];return S.screen==="main"&&s.res&&s.tr===550;}},
+  {t:"Lees Elev in de kolom Hold",d:"Dit getal geeft de spotter door. De schutter draait het in, afgerond op 0,1 mil. Cor en Spin blijven 0.0.",k:"Hold",ok:function(){return true;},ack:true,
+    info:function(){var r=S.slots[0].res;return r?"Elev Hold = "+fmtElev(r.elev)+". Melding: “Vijand bij de schuur, richting 1-8-5, 550 meter, elevatie "+dec1(r.elev).replace(".",",")+".”":"";}},
+  {t:"Ga naar doel B",d:"Druk op B (onder Atmsphr) of op ▶. Een tweede vijand verschijnt.",k:"Slots",ok:function(){return S.slot===1&&S.screen==="main";}},
+  {t:"Doel B: 420 m, lopend naar rechts",d:"Druk Target. Vul Target Range 420 en Target Speed 1.5 in. Zet de knop voor Target Speed op &gt; (rechts). Druk Done.",k:"TS",
+    ok:function(){var s=S.slots[1];return S.screen==="main"&&S.slot===1&&s.res&&s.tr===420&&Math.abs(s.ts-1.5)<0.01&&s.dir==="R";}},
+  {t:"Lees Elev Hold en Lead",d:"Elev Hold is de nieuwe totale elevatie vanaf nul. Lead is het voorhouden, met R voor rechts.",k:"Lead",ok:function(){return true;},ack:true,
+    info:function(){var r=S.slots[1].res;return r?"Elev Hold = "+fmtElev(r.elev)+", Lead = "+fmtLead(r.lead,"R")+". De schutter draait de toren naar "+dec1(r.elev).replace(".",",")+" en houdt "+dec1(r.lead).replace(".",",")+" mil rechts voor.":"";}},
+  {t:"Terug naar doel A",d:"Druk op A. De ATragMX heeft doel A onthouden; je hoeft niets opnieuw in te vullen.",k:"Slots",ok:function(){return S.slot===0&&S.screen==="main"&&S.slots[0].res;}}
+];
+var stepIdx=0, acked={};
+function renderSteps(){
+  el("steps").innerHTML=STEPS.map(function(s,i){
+    var cls=i<stepIdx?"done":i===stepIdx?"now":"later", extra="";
+    if(i===stepIdx){
+      var inf=s.info?s.info():""; if(inf) extra+='<div class="lt" style="margin-top:6px">'+esc(inf)+'</div>';
+      if(s.ack) extra+='<div class="actions"><button class="btn" type="button" data-ack="'+i+'">Gedaan</button></div>';
+    }
+    return '<li class="'+cls+'"><div><div class="step-t">'+s.t+'</div><div class="step-d">'+s.d+'</div>'+extra+'</div></li>';
+  }).join("")+(stepIdx>=STEPS.length?'<li class="now fin"><div><div class="step-t">Klaar</div><div class="step-d">Je hebt twee doelen uitgerekend en weet hoe je tussen doelen wisselt. Ga naar Oefenen voor willekeurige meldingen.</div></div></li>':'');
+  el("prog").style.width=Math.round(stepIdx/STEPS.length*100)+"%";
+}
+el("steps").addEventListener("click",function(e){var b=e.target.closest("[data-ack]"); if(!b) return; acked[b.getAttribute("data-ack")]=true; check();});
+function check(){
+  if(S.tab==="stappen"){
+    while(stepIdx<STEPS.length){var s=STEPS[stepIdx]; if(s.ok() && (!s.ack||acked[stepIdx])) stepIdx++; else break;}
+    renderSteps();
+  }
+  highlight();
+}
+function resetDevice(){S.gun=0; S.wm=null; S.clk={u:2,n:10}; S.pick=0; S.opt=false; S.cor=true; S.cur=0; S.unit="M"; S.su=0; S.screen="main"; S.slot=0; S.wind2=false; S.slots=[newSlot(),newSlot(),newSlot(),newSlot()];}
+el("restart").onclick=function(){stepIdx=0; acked={started:true}; resetDevice(); render(); check();};
+
+function highlight(){
+  var k=null;
+  if(S.tab==="uitleg") k=S.explain;
+  else if(S.tab==="stappen" && stepIdx<STEPS.length){
+    k=STEPS[stepIdx].k;
+    if(S.screen==="main" && ONTARGET.indexOf(k)>=0) k=(k==="TS"&&S.slot!==1)?"Slots":"Target";
+    if(S.screen==="gunlist") k=null;
+  }
+  [].forEach.call(document.querySelectorAll(".pda [data-k]"),function(n){n.classList.toggle("hl",!!k&&n.getAttribute("data-k")===k);});
+}
+
+// Oefenen
+var P={}, score={hit:0,n:0};
+var PLACES=["bij de schuur","bij de witte auto","op de heuvelrug","bij de muur","bij de boomgrens","op het dak","bij de brug","bij het hek"];
+function rnd(a,b){return a+Math.random()*(b-a);}
+function newScenario(){
+  var wpn=WEAPONS[Math.floor(Math.random()*WEAPONS.length)], gun=GUNS[wpn.g];
+  var maxR=gun.n.indexOf("5.56")===0?600:gun.n.indexOf("6.5")===0?700:900;
+  var range=Math.round(rnd(250,maxR)/10)*10;
+  var moving=Math.random()<0.45, ts=moving?(Math.random()<0.7?1.5:5):0, dir=Math.random()<0.5?"L":"R";
+  var bearing=("00"+Math.floor(rnd(0,360))).slice(-3);
+  P={wpn:wpn,g:wpn.g,range:range,ts:ts,dir:dir,place:PLACES[Math.floor(Math.random()*PLACES.length)],bearing:bearing,elev:0,lead:0,side:"R"};
+  var call="Vijand "+P.place+", richting "+bearing.split("").join("-")+", "+range+" meter"+(ts?", "+(ts===5?"rennend":"lopend")+" naar "+(dir==="R"?"rechts":"links"):", stilstaand")+".";
+  el("scen").innerHTML='<div class="call"><span class="who">Spotter</span>'+esc(call)+'</div>'+
+    '<div class="facts"><div class="fact"><div class="l">Wapen schutter</div><div class="val">'+esc(wpn.w)+'</div></div>'+
+    '<div class="fact"><div class="l">Kijker</div><div class="val">nul op 100 m</div></div>'+
+    '<div class="fact"><div class="l">Doelsnelheid</div><div class="val">'+(ts?String(ts).replace(".",",")+" m/s":"0")+'</div></div></div>'+
+    '<p class="muted" style="font-size:14px">Kies het juiste profiel, druk Target, vul afstand en snelheid in en druk Done. Lees Elev Hold en Lead. Lopend is ongeveer 1,5 m/s, rennend ongeveer 5 m/s.</p>';
+  el("sol").innerHTML=""; el("verdict").textContent="Nog niet geschoten"; el("verdict").className="verdict"; el("spotcall").textContent="Je spotter meldt hier de inslag.";
+  drawScope(null); updateDial();
+}
+function updateDial(){
+  el("r-elev").textContent=P.elev.toFixed(1);
+  el("r-lead").textContent=P.lead.toFixed(1)+(P.lead>0?(P.side==="R"?" rechts":" links"):"");
+  el("side-L").classList.toggle("on",P.side==="L"); el("side-R").classList.toggle("on",P.side==="R");
+}
+document.querySelector("#p-oefenen .dial").addEventListener("click",function(e){
+  var b=e.target.closest("button"); if(!b) return;
+  if(b.hasAttribute("data-de")){var d=+b.getAttribute("data-de"); P.elev=d===0?0:Math.max(-4,Math.min(30,Math.round((P.elev+d)*10)/10));}
+  if(b.hasAttribute("data-dl")){var l=+b.getAttribute("data-dl"); P.lead=l===0?0:Math.max(0,Math.min(10,Math.round((P.lead+l)*10)/10));}
+  if(b.hasAttribute("data-side")) P.side=b.getAttribute("data-side");
+  updateDial();
+});
+function truth(){return solve(GUNS[P.g],P.range,P.ts,0);}
+el("fire").onclick=function(){
+  var s=truth(), mpm=P.range/1000;
+  var dy=(P.elev-s.elev)*mpm;
+  var heldR=P.side==="R"?P.lead:-P.lead, needR=P.dir==="R"?s.lead:-s.lead;
+  var dx=(heldR-needR)*mpm;
+  var hit=Math.abs(dx)<=0.25&&Math.abs(dy)<=0.4;
+  score.n++; if(hit) score.hit++;
+  el("verdict").textContent=hit?"✓ Raak":"✕ Mis"; el("verdict").className="verdict "+(hit?"hit":"miss");
+  var call;
+  if(hit) call="“Raak.”";
+  else if(Math.abs(dy)>0.4 && Math.abs(dy)>=Math.abs(dx)) call="“"+(dy<0?"Omhoog ":"Omlaag ")+dec1(Math.abs(P.elev-s.elev)).replace(".",",")+".”";
+  else call="“Richtpunt "+(dx<0?"rechts":"links")+", "+Math.round(Math.abs(dx)*100)+" centimeter.”";
+  el("spotcall").textContent="Spotter: "+call+" Inslag "+Math.round(Math.abs(dy)*100)+" cm "+(dy>0?"te hoog":"te laag")+", "+Math.round(Math.abs(dx)*100)+" cm "+(dx>0?"rechts":"links")+" van het midden.";
+  el("score").textContent="Raak "+score.hit+" van "+score.n;
+  drawScope({dx:dx,dy:dy});
+};
+el("showsol").onclick=function(){
+  var s=truth(), g=GUNS[P.g];
+  el("sol").innerHTML='<table class="sol"><tr><td>Profiel</td><td>'+esc(g.n)+'</td></tr><tr><td>Target Range</td><td>'+P.range+' m</td></tr><tr><td>Target Speed</td><td>'+P.ts+' m/s '+(P.ts?(P.dir==="R"?"&gt;":"&lt;"):"")+'</td></tr>'+
+    '<tr><td>Elev Hold</td><td>'+r2(s.elev)+' → toren '+dec1(s.elev)+'</td></tr><tr><td>Lead</td><td>'+(P.ts?r2(s.lead)+(P.dir==="R"?"R":"L"):"0.0")+'</td></tr><tr><td>Vliegtijd</td><td>'+s.tof.toFixed(2)+' s</td></tr></table>';
+};
+el("next").onclick=newScenario;
+function drawScope(imp){
+  var mpu=P.range/1000/10, h=1.7/mpu, w=0.5/mpu;
+  var s='<defs><clipPath id="cl"><circle r="98"/></clipPath></defs><circle r="99" fill="#d6d6d6" stroke="#000" stroke-width="2"/><g clip-path="url(#cl)">'+
+    '<g transform="translate(0,'+(h*0.275)+')"><rect x="-100" y="'+(h*0.45)+'" width="200" height="200" fill="#a3a3a3"/>'+
+    '<rect x="'+(-w/2)+'" y="'+(-h*0.55)+'" width="'+w+'" height="'+(h*0.55)+'" rx="'+(w*0.25)+'" fill="#2b2b2b"/>'+
+    '<circle cx="0" cy="'+(-h*0.55-w*0.32)+'" r="'+(w*0.32)+'" fill="#2b2b2b"/>'+
+    '<rect x="'+(-w/2)+'" y="0" width="'+(w*0.42)+'" height="'+(h*0.45)+'" fill="#2b2b2b"/><rect x="'+(w*0.08)+'" y="0" width="'+(w*0.42)+'" height="'+(h*0.45)+'" fill="#2b2b2b"/></g>'+
+    '<line x1="-100" y1="0" x2="100" y2="0" stroke="#000" stroke-width="0.8"/><line x1="0" y1="-100" x2="0" y2="100" stroke="#000" stroke-width="0.8"/>';
+  for(var i=-9;i<=9;i++){ if(!i) continue; s+='<circle cx="'+(i*10)+'" cy="0" r="1.2" fill="#000"/><circle cx="0" cy="'+(i*10)+'" r="1.2" fill="#000"/>'; }
+  if(imp){var ix=Math.max(-95,Math.min(95,imp.dx/mpu)), iy=Math.max(-95,Math.min(95,-imp.dy/mpu));
+    s+='<circle cx="'+ix+'" cy="'+iy+'" r="4" fill="#000" stroke="#fff" stroke-width="1.6"/>';}
+  s+='</g><text x="0" y="116" text-anchor="middle" font-size="9" fill="currentColor" font-family="JetBrains Mono,monospace">1 stip = 1 mil · '+P.range+' m</text>';
+  el("scope").innerHTML=s;
+}
+
+// Tabs
+function setTab(t){
+  S.tab=t;
+  [].forEach.call(document.querySelectorAll("nav.tabs button"),function(b){b.setAttribute("aria-selected",b.getAttribute("data-tab")===t?"true":"false");});
+  el("p-uitleg").hidden=t!=="uitleg"; el("p-stappen").hidden=t!=="stappen"; el("p-oefenen").hidden=t!=="oefenen";
+  if(t==="stappen" && stepIdx===0 && !acked.started){acked.started=true; resetDevice();}
+  S.screen="main"; render(); check();
+  try{localStorage.setItem("atragmx-tab",t);}catch(e){}
+}
+document.querySelector("nav.tabs").addEventListener("click",function(e){var b=e.target.closest("button[data-tab]"); if(b) setTab(b.getAttribute("data-tab"));});
+var start="uitleg"; try{var st=localStorage.getItem("atragmx-tab"); if(st) start=st;}catch(e){}
+if(["uitleg","stappen","oefenen"].indexOf(location.hash.slice(1))>=0) start=location.hash.slice(1);
+newScenario(); renderSteps(); setExplain("Hold"); setTab(start);
+})();
+</script>
+<footer class="site-foot">Lowlands Tactical · Ontwerp: OmarchyUI in grijstinten · Lettertype JetBrains Mono (SIL Open Font License)</footer>
+</body>
+</html>
